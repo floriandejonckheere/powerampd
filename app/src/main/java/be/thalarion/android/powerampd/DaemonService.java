@@ -14,6 +14,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class DaemonService extends Service {
 
@@ -28,9 +29,6 @@ public class DaemonService extends Service {
 
     // UI handler
     private Handler handler;
-
-    public DaemonService() {
-    }
 
     public void onCreate() {
         this.notificationBuilder = new NotificationCompat.Builder(this);
@@ -47,45 +45,60 @@ public class DaemonService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-        this.handler.post(new NotificationThread(getString(R.string.notification_title_starting),
-                                                getString(R.string.notification_text_starting)));
+        this.handler.post(new NotificationThread(R.string.notification_title_starting,
+                                                R.string.notification_text_starting));
         this.serverThread.start();
-
         return Service.START_STICKY;
     }
 
     @Override
     public void onDestroy() {
+        this.handler.post(new NotificationThread(R.string.notification_title_stopping,
+                                                R.string.notification_text_stopping));
+        this.serverThread.interrupt();
+        try {
+            this.serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 
 
+    /**
+     * ServerThread - bind to TCP port and fork
+     */
     class ServerThread implements Runnable {
         @Override
         public void run() {
             Socket socket;
             try {
                 serverSocket = new ServerSocket(port);
-                while(!Thread.currentThread().isInterrupted()) {
+                while (!Thread.currentThread().isInterrupted()) {
                     socket = serverSocket.accept();
-                    DaemonThread daemonThread = new DaemonThread(getApplicationContext(), socket);
+                    new DaemonThread(getApplicationContext(), socket);
                 }
 
+            } catch(SocketException e) {
+                // Socket.close() called in service
+                e.printStackTrace();
             } catch(IOException e) {
-                Toast.makeText(getApplicationContext(), R.string.toast_error_bind, Toast.LENGTH_LONG);
+                e.printStackTrace();
             }
         }
     }
 
+    /**
+     * NotificationThread - persistent notification management
+     */
     class NotificationThread implements Runnable {
 
         private String title;
         private String text;
 
-        public NotificationThread(String title, String text) {
-            this.title = title;
-            this.text = text;
+        public NotificationThread(int titleResId, int textResId) {
+            this.title = getString(titleResId);
+            this.text = getString(textResId);
         }
 
         @Override

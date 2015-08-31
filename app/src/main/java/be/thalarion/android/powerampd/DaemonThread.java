@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.List;
 
 import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolCompletion;
@@ -44,16 +45,16 @@ public class DaemonThread implements Runnable {
 
             while(!Thread.currentThread().isInterrupted()) {
                 String command = reader.readLine();
-                String[] cmdline = Tokenizer.tokenize(command);
-                if(cmdline.length == 0) {
+                List<String> cmdline = Tokenizer.tokenize(command);
+                if(cmdline.size() == 0) {
                     send(new ProtocolError(ProtocolError.NO_COMMAND, 0, command, "No command given"));
                     exit();
                 }
-                if(cmdline[0].equals("volume")) {
+                if(cmdline.get(0).equals("volume")) {
 
                 } else {
-                    send(new ProtocolError(ProtocolError.UNKNOWN_COMMAND, 0, cmdline[0],
-                            String.format("Unknown command \"%s\"", cmdline[0])));
+                    send(new ProtocolError(ProtocolError.UNKNOWN_COMMAND, 0, cmdline.get(0),
+                            String.format("Unknown command \"%s\"", cmdline.get(0))));
                 }
 
             }

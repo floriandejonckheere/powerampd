@@ -2,9 +2,11 @@
     <string name="app_name">PoweraMPD</string>
 
     <string name="notification_title_starting">Starting PoweraMPD</string>
-    <string name="notification_title_running">Starting PoweraMPD</string>
+    <string name="notification_title_stopping">Stopping PoweraMPD</string>
+    <string name="notification_title_running">PoweraMPD running</string>
 
     <string name="notification_text_starting"></string>
+    <string name="notification_text_stopping"></string>
     <string name="notification_text_running">Listening on </string>
 
     <string name="toast_error_bind">PoweraMPD: error binding address</string>
