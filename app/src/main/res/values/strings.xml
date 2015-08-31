@@ -6,4 +6,8 @@
 
     <string name="notification_text_starting"></string>
     <string name="notification_text_running">Listening on </string>
+
+    <string name="toast_error_bind">PoweraMPD: error binding address</string>
+    <string name="toast_error_socket">PoweraMPD: error creating socket to client</string>
+    <string name="toast_error_client">PoweraMPD: error connecting to client</string>
 </resources>
