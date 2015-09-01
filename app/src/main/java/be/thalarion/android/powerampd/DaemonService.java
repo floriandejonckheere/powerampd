@@ -5,9 +5,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -29,9 +31,8 @@ public class DaemonService extends Service {
     private static final int notificationID = R.string.notification_text_running;
 
     // Daemon
-    private Thread serverThread;
-    private ServerSocket serverSocket;
-    public static final int port = 6600;
+    private static Thread serverThread;
+    private static ServerSocket serverSocket;
 
     // UI handler
     private Handler handler;
@@ -39,7 +40,6 @@ public class DaemonService extends Service {
     public void onCreate() {
         this.notificationBuilder = new NotificationCompat.Builder(this);
         this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        this.serverThread = new Thread(new ServerThread());
         this.handler = new Handler();
     }
 
@@ -51,8 +51,10 @@ public class DaemonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(!this.serverThread.isAlive())
-            this.serverThread.start();
+        if(DaemonService.serverThread == null) {
+            DaemonService.serverThread = new Thread(new ServerThread());
+            DaemonService.serverThread.start();
+        }
 
         return Service.START_STICKY;
     }
@@ -75,6 +77,8 @@ public class DaemonService extends Service {
     class ServerThread implements Runnable {
         @Override
         public void run() {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            int port = Integer.valueOf(preferences.getString("pref_port", getString(R.string.pref_port_default)));
             Socket socket;
             try {
                 serverSocket = new ServerSocket(port);

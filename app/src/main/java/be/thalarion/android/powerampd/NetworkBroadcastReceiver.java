@@ -6,14 +6,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        SharedPreferences preferences = context.getSharedPreferences("preferences", Context.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 
-        if(preferences.getBoolean("enabled", true)) {
+        if(preferences.getBoolean("pref_enabled", true)) {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI); //getActiveNetworkInfo();
             if (info != null) {
