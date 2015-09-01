@@ -45,15 +45,20 @@ public class DaemonService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i("powerampd", String.format("%s\n", (serverThread == null)));
         if(DaemonService.serverThread == null) {
             DaemonService.serverThread = new Thread(new ServerThread());
             DaemonService.serverThread.start();
+            WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+            String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+            int port = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("pref_port", getString(R.string.pref_port_default)));
+            handler.post(new NotificationThread(getString(R.string.notification_title_running),
+                    String.format("%s %s:%d\n", getString(R.string.notification_text_running), ip, + port)));
         }
 
         return Service.START_STICKY;
@@ -61,13 +66,16 @@ public class DaemonService extends Service {
 
     @Override
     public void onDestroy() {
-        this.serverThread.interrupt();
-        try {
-            this.serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(DaemonService.serverThread != null) {
+            this.serverThread.interrupt();
+            try {
+                this.serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            this.serverThread = null;
+            handler.post(new NotificationThread(null, null));
         }
-        handler.post(new NotificationThread(null, null));
     }
 
 
@@ -77,15 +85,10 @@ public class DaemonService extends Service {
     class ServerThread implements Runnable {
         @Override
         public void run() {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            int port = Integer.valueOf(preferences.getString("pref_port", getString(R.string.pref_port_default)));
+            int port = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("pref_port", getString(R.string.pref_port_default)));
             Socket socket;
             try {
                 serverSocket = new ServerSocket(port);
-                WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-                String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-                handler.post(new NotificationThread(getString(R.string.notification_title_running),
-                                                    getString(R.string.notification_text_running) + ip + ":" + port));
                 while (!Thread.currentThread().isInterrupted()) {
                     socket = serverSocket.accept();
                     new DaemonThread(getApplicationContext(), socket);
@@ -93,6 +96,7 @@ public class DaemonService extends Service {
 
             } catch(SocketException e) {
                 // Socket.close() called in service
+                stopSelf();
             } catch(IOException e) {
                 e.printStackTrace();
             }
