@@ -1,6 +1,7 @@
 package be.thalarion.android.powerampd;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,18 +10,23 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 
 public class DaemonService extends Service {
 
     private android.support.v4.app.NotificationCompat.Builder notificationBuilder;
     private NotificationManager notificationManager;
-    private int notificationID = 0;
+    private static final int notificationID = R.string.notification_text_running;
 
     // Daemon
     private Thread serverThread;
@@ -32,6 +38,7 @@ public class DaemonService extends Service {
 
     public void onCreate() {
         this.notificationBuilder = new NotificationCompat.Builder(this);
+        this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         this.serverThread = new Thread(new ServerThread());
         this.handler = new Handler();
     }
@@ -44,24 +51,21 @@ public class DaemonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        this.handler.post(new NotificationThread(R.string.notification_title_starting,
-                                                R.string.notification_text_starting));
-        this.serverThread.start();
+        if(!this.serverThread.isAlive())
+            this.serverThread.start();
+
         return Service.START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        this.handler.post(new NotificationThread(R.string.notification_title_stopping,
-                                                R.string.notification_text_stopping));
         this.serverThread.interrupt();
         try {
             this.serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        super.onDestroy();
+        handler.post(new NotificationThread(null, null));
     }
 
 
@@ -74,6 +78,10 @@ public class DaemonService extends Service {
             Socket socket;
             try {
                 serverSocket = new ServerSocket(port);
+                WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+                String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+                handler.post(new NotificationThread(getString(R.string.notification_title_running),
+                                                    getString(R.string.notification_text_running) + ip + ":" + port));
                 while (!Thread.currentThread().isInterrupted()) {
                     socket = serverSocket.accept();
                     new DaemonThread(getApplicationContext(), socket);
@@ -81,7 +89,6 @@ public class DaemonService extends Service {
 
             } catch(SocketException e) {
                 // Socket.close() called in service
-                e.printStackTrace();
             } catch(IOException e) {
                 e.printStackTrace();
             }
@@ -96,20 +103,27 @@ public class DaemonService extends Service {
         private String title;
         private String text;
 
-        public NotificationThread(int titleResId, int textResId) {
-            this.title = getString(titleResId);
-            this.text = getString(textResId);
+        public NotificationThread(String title, String text) {
+            this.title = title;
+            this.text = text;
         }
 
         @Override
         public void run() {
-            notificationBuilder
-                    .setContentTitle(this.title)
-                    .setContentText(this.text)
-                    // .setSmallIcon(null) TODO
-                    .setContentIntent(null); // TODO
+            if(this.title == null && this.text == null) {
+                notificationManager.cancel(notificationID);
+            } else {
+                Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                PendingIntent intent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                notificationBuilder
+                        .setContentTitle(this.title)
+                        .setContentText(this.text)
+                        .setSmallIcon(R.drawable.ic_notification)
+                        .setContentIntent(intent)
+                        .setOngoing(true);
 
-            notificationManager.notify(notificationID, notificationBuilder.build());
+                notificationManager.notify(notificationID, notificationBuilder.build());
+            }
         }
     }
 }

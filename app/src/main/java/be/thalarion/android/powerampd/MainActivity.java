@@ -14,8 +14,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         // DEBUG - REMOVE LATER
-        Intent intent = new Intent(this, DaemonService.class);
-        startService(intent);
+//        Intent intent = new Intent(this, DaemonService.class);
+//        startService(intent);
     }
 
     @Override

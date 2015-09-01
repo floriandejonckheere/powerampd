@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
     @Override
@@ -14,7 +15,7 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
 
         if(preferences.getBoolean("enabled", true)) {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo info = cm.getActiveNetworkInfo();
+            NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI); //getActiveNetworkInfo();
             if (info != null) {
                 if (info.isConnected()) {
                     Intent daemonIntent = new Intent(context, DaemonService.class);
