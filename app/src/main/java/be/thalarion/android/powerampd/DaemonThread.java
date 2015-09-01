@@ -1,8 +1,11 @@
 package be.thalarion.android.powerampd;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.maxmpz.poweramp.player.PowerAMPiAPIHelper;
+import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,11 +15,6 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
 
-import be.thalarion.android.powerampd.protocol.Protocol;
-import be.thalarion.android.powerampd.protocol.ProtocolCompletion;
-import be.thalarion.android.powerampd.protocol.ProtocolError;
-import be.thalarion.android.powerampd.protocol.Tokenizer;
-
 public class DaemonThread implements Runnable {
 
     private Socket socket;
@@ -24,6 +22,14 @@ public class DaemonThread implements Runnable {
 
     private BufferedReader reader;
     private BufferedWriter writer;
+
+    private enum Command {
+        COMMAND_LIST_BEGIN,
+        COMMAND_LIST_OK_BEGIN,
+        COMMAND_LIST_END,
+        NEXT,
+        PREVIOUS
+    }
 
     public DaemonThread(Context context, Socket socket) {
         this.context = context;
@@ -43,21 +49,32 @@ public class DaemonThread implements Runnable {
         try {
             Log.i("powerampd", "Sending protocol handshake");
             // MPD protocol version
-            send(new ProtocolCompletion());
+            send(new Protocol.Handshake());
 
             while(!Thread.currentThread().isInterrupted()) {
-                String command = reader.readLine();
-                if(command.length() == 0) {
-                    send(new ProtocolError(ProtocolError.UNKNOWN_COMMAND, 0, command, "No command given"));
+                String line = reader.readLine();
+                if(line == null || line.length() == 0) {
+                    send(new Protocol.Error(Protocol.Error.UNKNOWN_COMMAND, 0, line, "No command given"));
                     exit();
-                }
-                List<String> cmdline = Tokenizer.tokenize(command);
-                Log.i("powerampd", String.format("%d\n", cmdline.size()));
-                if(cmdline.get(0).equals("volume")) {
-
                 } else {
-                    send(new ProtocolError(ProtocolError.UNKNOWN_COMMAND, 0, cmdline.get(0),
-                            String.format("unknown command \"%s\"", cmdline.get(0))));
+                    List<String> cmdline = Tokenizer.tokenize(line);
+
+                    try {
+                        switch(Command.valueOf(cmdline.get(0).toUpperCase())) {
+                            case NEXT:
+                                command(PowerampAPI.Commands.NEXT);
+                                send(new Protocol.Completion());
+                                break;
+                            case PREVIOUS:
+                                command(PowerampAPI.Commands.PREVIOUS);
+                                send(new Protocol.Completion());
+                                break;
+                        }
+                    } catch(IllegalArgumentException e) {
+                        // Unknown command
+                        send(new Protocol.Error(Protocol.Error.UNKNOWN_COMMAND, 0, cmdline.get(0),
+                                String.format("unknown command \"%s\"", cmdline.get(0))));
+                    }
                 }
 
             }
@@ -66,7 +83,7 @@ public class DaemonThread implements Runnable {
         }
     }
 
-    public void send(Protocol protocol) {
+    private void send(Protocol protocol) {
         try {
             this.writer.write(protocol.toString());
             this.writer.flush();
@@ -76,7 +93,7 @@ public class DaemonThread implements Runnable {
         }
     }
 
-    public void exit() {
+    private void exit() {
         try {
             this.reader.close();
             this.writer.close();
@@ -85,5 +102,9 @@ public class DaemonThread implements Runnable {
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void command(int action){
+        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND).setPackage(PowerampAPI.PACKAGE_NAME).putExtra(PowerampAPI.COMMAND, action));
     }
 }

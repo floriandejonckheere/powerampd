@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd.protocol;
+package be.thalarion.android.powerampd;
 
 import java.util.ArrayList;
 import java.util.List;
