@@ -2,7 +2,6 @@ package be.thalarion.android.powerampd.protocol;
 
 public class ProtocolError implements Protocol {
 
-    public static final int NO_COMMAND = 5;
     public static final int UNKNOWN_COMMAND = 5;
 
     private final int error;
@@ -19,7 +18,7 @@ public class ProtocolError implements Protocol {
 
     @Override
     public String toString() {
-        return String.format("ACK [%d@%d] {%s} %s\n", error, line, command, message);
+        return String.format("ACK [%d@%d] {} %s\n", error, line, message);
     }
 
 }

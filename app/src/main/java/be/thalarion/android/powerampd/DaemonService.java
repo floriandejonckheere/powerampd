@@ -50,7 +50,6 @@ public class DaemonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i("powerampd", String.format("%s\n", (serverThread == null)));
         if(DaemonService.serverThread == null) {
             DaemonService.serverThread = new Thread(new ServerThread());
             DaemonService.serverThread.start();
@@ -91,7 +90,8 @@ public class DaemonService extends Service {
                 serverSocket = new ServerSocket(port);
                 while (!Thread.currentThread().isInterrupted()) {
                     socket = serverSocket.accept();
-                    new DaemonThread(getApplicationContext(), socket);
+                    DaemonThread daemonThread = new DaemonThread(getApplicationContext(), socket);
+                    new Thread(daemonThread).start();
                 }
 
             } catch(SocketException e) {

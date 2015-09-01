@@ -1,6 +1,7 @@
 package be.thalarion.android.powerampd;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -21,16 +22,16 @@ public class DaemonThread implements Runnable {
     private Socket socket;
     private Context context;
 
-    private final BufferedReader reader = null;
-    private final BufferedWriter writer = null;
+    private BufferedReader reader;
+    private BufferedWriter writer;
 
     public DaemonThread(Context context, Socket socket) {
         this.context = context;
         this.socket = socket;
 
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
+            this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            this.writer = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
         } catch (IOException e) {
             e.printStackTrace();
             exit();
@@ -40,21 +41,23 @@ public class DaemonThread implements Runnable {
     @Override
     public void run() {
         try {
+            Log.i("powerampd", "Sending protocol handshake");
             // MPD protocol version
             send(new ProtocolCompletion());
 
             while(!Thread.currentThread().isInterrupted()) {
                 String command = reader.readLine();
-                List<String> cmdline = Tokenizer.tokenize(command);
-                if(cmdline.size() == 0) {
-                    send(new ProtocolError(ProtocolError.NO_COMMAND, 0, command, "No command given"));
+                if(command.length() == 0) {
+                    send(new ProtocolError(ProtocolError.UNKNOWN_COMMAND, 0, command, "No command given"));
                     exit();
                 }
+                List<String> cmdline = Tokenizer.tokenize(command);
+                Log.i("powerampd", String.format("%d\n", cmdline.size()));
                 if(cmdline.get(0).equals("volume")) {
 
                 } else {
                     send(new ProtocolError(ProtocolError.UNKNOWN_COMMAND, 0, cmdline.get(0),
-                            String.format("Unknown command \"%s\"", cmdline.get(0))));
+                            String.format("unknown command \"%s\"", cmdline.get(0))));
                 }
 
             }
@@ -66,6 +69,7 @@ public class DaemonThread implements Runnable {
     public void send(Protocol protocol) {
         try {
             this.writer.write(protocol.toString());
+            this.writer.flush();
         } catch(IOException e) {
             e.printStackTrace();
             exit();
@@ -74,8 +78,10 @@ public class DaemonThread implements Runnable {
 
     public void exit() {
         try {
-            this.socket.close();
+            this.reader.close();
+            this.writer.close();
             Thread.currentThread().interrupt();
+            this.socket.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
