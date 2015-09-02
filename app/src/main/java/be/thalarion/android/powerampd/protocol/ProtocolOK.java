@@ -1,20 +1,20 @@
 package be.thalarion.android.powerampd.protocol;
 
-public class ProtocolAcknowledgement implements Protocol {
+public class ProtocolOK implements Protocol {
 
     private final String message;
 
-    public ProtocolAcknowledgement(String message) {
+    public ProtocolOK(String message) {
         this.message = message;
     }
 
-    public ProtocolAcknowledgement() {
+    public ProtocolOK() {
         this(null);
     }
 
     @Override
     public String toString() {
-        if(this.message == null) {
+        if (this.message == null) {
             return "OK\n";
         } else return String.format("OK %s\n", this.message);
     }

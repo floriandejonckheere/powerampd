@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
     @Override
@@ -18,7 +17,7 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
 
         if (info != null) {
             if (info.isConnected()) {
-                if(preferences.getBoolean("pref_enabled", true)) {
+                if (preferences.getBoolean("pref_enabled", true)) {
                     Intent daemonIntent = new Intent(context, DaemonService.class);
                     context.startService(daemonIntent);
                 }

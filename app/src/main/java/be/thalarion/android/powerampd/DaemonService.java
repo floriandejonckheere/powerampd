@@ -3,25 +3,22 @@ package be.thalarion.android.powerampd;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.Formatter;
-import android.util.Log;
-import android.widget.Toast;
+
+import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 
 public class DaemonService extends Service {
@@ -30,9 +27,15 @@ public class DaemonService extends Service {
     private NotificationManager notificationManager;
     private static final int notificationID = R.string.notification_text_running;
 
+    // Broadcast receivers
+    private BroadcastReceiver trackBroadcastReceiver;
+    private BroadcastReceiver statusBroadcastReceiver;
+    private BroadcastReceiver playingModeBroadcastReceiver;
+
     // Daemon
-    private static Thread serverThread;
-    private static ServerSocket serverSocket;
+    private Thread serverThread;
+    private ServerSocket serverSocket;
+    private int port;
 
     // UI handler
     private Handler handler;
@@ -41,6 +44,26 @@ public class DaemonService extends Service {
         this.notificationBuilder = new NotificationCompat.Builder(this);
         this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         this.handler = new Handler();
+        this.port = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("pref_port", getString(R.string.pref_port_default)));
+
+        this.trackBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                State.trackIntent = intent;
+            }
+        };
+        this.statusBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                State.statusIntent = intent;
+            }
+        };
+        this.playingModeBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                State.playingModeIntent = intent;
+            }
+        };
     }
 
     @Override
@@ -50,12 +73,13 @@ public class DaemonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(DaemonService.serverThread == null) {
-            DaemonService.serverThread = new Thread(new ServerThread());
-            DaemonService.serverThread.start();
+        if (serverThread == null) {
+            register();
+            serverThread = new Thread(new ServerThread());
+            serverThread.start();
+
             WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
             String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-            int port = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("pref_port", getString(R.string.pref_port_default)));
             handler.post(new NotificationThread(getString(R.string.notification_title_running),
                     String.format("%s %s:%d\n", getString(R.string.notification_text_running), ip, + port)));
         }
@@ -65,18 +89,34 @@ public class DaemonService extends Service {
 
     @Override
     public void onDestroy() {
-        if(DaemonService.serverThread != null) {
-            this.serverThread.interrupt();
+        if (serverThread != null) {
+            // Set interrupt flag
+            serverThread.interrupt();
             try {
-                this.serverSocket.close();
+                // Close server socket causing accept() to exit with a SocketException
+                serverSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            this.serverThread = null;
+            serverThread = null;
             handler.post(new NotificationThread(null, null));
+            unregister();
         }
     }
 
+    // Register Poweramp broadcast receivers
+    private void register() {
+        registerReceiver(trackBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED));
+        registerReceiver(statusBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED));
+        registerReceiver(playingModeBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_PLAYING_MODE_CHANGED));
+    }
+
+    // Unregister Poweramp broadcast receivers
+    private void unregister() {
+        unregisterReceiver(trackBroadcastReceiver);
+        unregisterReceiver(statusBroadcastReceiver);
+        unregisterReceiver(playingModeBroadcastReceiver);
+    }
 
     /**
      * ServerThread - bind to TCP port and fork
@@ -84,20 +124,16 @@ public class DaemonService extends Service {
     class ServerThread implements Runnable {
         @Override
         public void run() {
-            int port = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("pref_port", getString(R.string.pref_port_default)));
             Socket socket;
             try {
                 serverSocket = new ServerSocket(port);
                 while (!Thread.currentThread().isInterrupted()) {
                     socket = serverSocket.accept();
-                    DaemonThread daemonThread = new DaemonThread(getApplicationContext(), socket);
-                    new Thread(daemonThread).start();
+                    new Thread(new WorkerThread(getApplicationContext(), socket)).start();
                 }
-
-            } catch(SocketException e) {
+            } catch (SocketException e) {
                 // Socket.close() called in service
-                stopSelf();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -118,7 +154,7 @@ public class DaemonService extends Service {
 
         @Override
         public void run() {
-            if(this.title == null && this.text == null) {
+            if (this.title == null && this.text == null) {
                 notificationManager.cancel(notificationID);
             } else {
                 Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);

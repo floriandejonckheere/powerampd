@@ -1,6 +1,5 @@
 package be.thalarion.android.powerampd;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -11,9 +10,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 public class MainActivity extends PreferenceActivity {
 
@@ -32,9 +28,9 @@ public class MainActivity extends PreferenceActivity {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-                if(info != null) {
+                if (info != null) {
                     if (o.toString().equals("true")) {
-                        if(info.isConnected())
+                        if (info.isConnected())
                             getApplicationContext().startService(new Intent(getApplicationContext(), DaemonService.class));
                     } else {
                         // Stop service
@@ -47,8 +43,8 @@ public class MainActivity extends PreferenceActivity {
 
         ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if(info != null && info.isConnected())
-            if(findPreference("pref_enabled").isEnabled()) {
+        if (info != null && info.isConnected())
+            if (findPreference("pref_enabled").isEnabled()) {
                 getApplicationContext().startService(new Intent(getApplicationContext(), DaemonService.class));
             } else {
                 getApplicationContext().stopService(new Intent(getApplicationContext(), DaemonService.class));
@@ -57,9 +53,9 @@ public class MainActivity extends PreferenceActivity {
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        if(!preference.hasKey()) return true;
+        if (!preference.hasKey()) return true;
 
-        if(preference.getKey().equals("pref_sub_auth")) {
+        if (preference.getKey().equals("pref_sub_auth")) {
 //            startActivity(new Intent(getApplicationContext(), AuthActivity.class));
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
