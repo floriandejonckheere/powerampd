@@ -25,24 +25,28 @@ public class MainActivity extends PreferenceActivity {
 
         bindPreferenceSummaryToValue(findPreference("pref_port"));
 
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
 
         findPreference("pref_enabled").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
-                if(info != null && info.isConnected())
-                    if(o.toString().equals("true")) {
-                        // Start service
-                        getApplicationContext().startService(new Intent(getApplicationContext(), DaemonService.class));
+                ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                if(info != null) {
+                    if (o.toString().equals("true")) {
+                        if(info.isConnected())
+                            getApplicationContext().startService(new Intent(getApplicationContext(), DaemonService.class));
                     } else {
                         // Stop service
                         getApplicationContext().stopService(new Intent(getApplicationContext(), DaemonService.class));
                     }
+                }
                 return true;
             }
         });
 
+        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         if(info != null && info.isConnected())
             if(findPreference("pref_enabled").isEnabled()) {
                 getApplicationContext().startService(new Intent(getApplicationContext(), DaemonService.class));
