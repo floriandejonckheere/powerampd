@@ -45,9 +45,6 @@
 
     <PreferenceCategory
         android:key="pref_auth_entries"
-        android:title="@string/title_auth_entries"
-        android:dependency="pref_auth_enabled">
-
-    </PreferenceCategory>
+        android:title="@string/title_auth_entries" />
 
 </PreferenceScreen>

@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd.ui;
+package be.thalarion.android.powerampd;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +11,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-
-import be.thalarion.android.powerampd.DaemonService;
-import be.thalarion.android.powerampd.R;
-import be.thalarion.android.powerampd.ui.AuthActivity;
 
 public class MainActivity extends PreferenceActivity {
 

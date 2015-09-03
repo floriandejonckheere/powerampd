@@ -21,8 +21,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-import be.thalarion.android.powerampd.ui.MainActivity;
-
 public class DaemonService extends Service {
 
     private android.support.v4.app.NotificationCompat.Builder notificationBuilder;

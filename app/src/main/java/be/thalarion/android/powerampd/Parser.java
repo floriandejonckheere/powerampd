@@ -1,19 +1,15 @@
 package be.thalarion.android.powerampd;
 
-import android.content.Context;
-import android.content.Intent;
-
 import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import be.thalarion.android.powerampd.WorkerThread.Handle;
 import be.thalarion.android.powerampd.protocol.Permission;
-import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
-import be.thalarion.android.powerampd.WorkerThread.Handle;
 
 /**
  * Parser - parse and build commands

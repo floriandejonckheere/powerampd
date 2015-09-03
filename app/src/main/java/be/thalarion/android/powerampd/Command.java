@@ -2,10 +2,9 @@ package be.thalarion.android.powerampd;
 
 import java.util.List;
 
-import be.thalarion.android.powerampd.protocol.Permission;
-import be.thalarion.android.powerampd.protocol.Protocol;
-import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.WorkerThread.Handle;
+import be.thalarion.android.powerampd.protocol.Permission;
+import be.thalarion.android.powerampd.protocol.ProtocolException;
 
 public abstract class Command {
 
