@@ -21,6 +21,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import be.thalarion.android.powerampd.ui.MainActivity;
+
 public class DaemonService extends Service {
 
     private android.support.v4.app.NotificationCompat.Builder notificationBuilder;
@@ -158,6 +160,8 @@ public class DaemonService extends Service {
                 notificationManager.cancel(notificationID);
             } else {
                 Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                resultIntent.setAction(Intent.ACTION_MAIN);
+                resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
                 PendingIntent intent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 notificationBuilder
                         .setContentTitle(this.title)

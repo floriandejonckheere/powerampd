@@ -22,9 +22,9 @@
             android:singleLine="true"
             android:maxLines="1" />
 
-        <!--<Preference-->
-            <!--android:key="pref_sub_auth"-->
-            <!--android:title="@string/title_auth" />-->
+        <Preference
+            android:key="pref_sub_auth"
+            android:title="@string/title_auth" />
 
     </PreferenceCategory>
 </PreferenceScreen>

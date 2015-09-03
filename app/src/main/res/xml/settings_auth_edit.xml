@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:key="pref_password"
+        android:title="@string/pref_password"
+        android:defaultValue="@string/pref_password_default"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+    <CheckBoxPreference
+        android:key="pref_permission_read"
+        android:title="@string/pref_permission_read"
+        android:summary="@string/pref_permission_read_desc"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="pref_permission_add"
+        android:title="@string/pref_permission_add"
+        android:summary="@string/pref_permission_add_desc"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="pref_permission_control"
+        android:title="@string/pref_permission_control"
+        android:summary="@string/pref_permission_control_desc"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:key="pref_permission_admin"
+        android:title="@string/pref_permission_admin"
+        android:summary="@string/pref_permission_admin_desc"
+        android:defaultValue="false" />
+
+</PreferenceScreen>
