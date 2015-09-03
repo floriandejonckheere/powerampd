@@ -13,17 +13,21 @@ There are a few differences in protocol response with the official MPD server. T
 
 **v0.1**
 
-- Basic MPD protocol (playback control, song information)
+- MPD Protocol parser
 
 **v0.2**
 
+- Basic MPD protocol (playback control, song information)
 - Access control
 
 **v0.3**
 
 - ZeroConf support
-- Extended MPD protocol (library access)
 
 **v0.4**
+
+- Extended MPD protocol (library access)
+
+**v1.0**
 
 - Full MPD protocol compliance

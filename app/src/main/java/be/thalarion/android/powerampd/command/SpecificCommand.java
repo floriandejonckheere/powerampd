@@ -1,20 +1,18 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.command;
 
 import java.util.List;
 
 import be.thalarion.android.powerampd.protocol.Permission;
-import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
-import be.thalarion.android.powerampd.WorkerThread.Handle;
 
-public abstract class Command {
+public abstract class SpecificCommand implements Command {
 
     protected final List<String> cmdline;
     private final Permission permission;
     private final int minArgs;
     private final int maxArgs;
 
-    public Command(List<String> cmdline, Permission permission, int minArgs, int maxArgs)
+    public SpecificCommand(List<String> cmdline, Permission permission, int minArgs, int maxArgs)
             throws ProtocolException {
         this.cmdline = cmdline;
         this.permission = permission;
@@ -33,6 +31,9 @@ public abstract class Command {
         }
     }
 
-    public abstract void execute(Handle handle)
-            throws ProtocolException;
+    @Override
+    public void execute(Handle handle)
+            throws ProtocolException {
+        handle.authorize(permission);
+    }
 }

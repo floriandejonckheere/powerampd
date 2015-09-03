@@ -129,7 +129,7 @@ public class DaemonService extends Service {
                 serverSocket = new ServerSocket(port);
                 while (!Thread.currentThread().isInterrupted()) {
                     socket = serverSocket.accept();
-                    new Thread(new WorkerThread(getApplicationContext(), socket)).start();
+                    new Thread(new ClientThread(getApplicationContext(), socket)).start();
                 }
             } catch (SocketException e) {
                 // Socket.close() called in service
