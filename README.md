@@ -17,11 +17,13 @@ There are a few differences in protocol response with the official MPD server. T
 
 **v0.2**
 
-- ZeroConf support
-- Extended MPD protocol (library)
 - Access control
 
 **v0.3**
 
+- ZeroConf support
+- Extended MPD protocol (library access)
+
+**v0.4**
+
 - Full MPD protocol compliance
-- Possibly streaming endpoint
