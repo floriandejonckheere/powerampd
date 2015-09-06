@@ -5,7 +5,7 @@ import com.maxmpz.poweramp.player.PowerampAPI;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.thalarion.android.powerampd.command.Handle;
+import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.command.CommandLine;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
@@ -17,7 +17,7 @@ import be.thalarion.android.powerampd.protocol.ProtocolOK;
  */
 public class Parser {
 
-    public static List<String> tokenize(String command) {
+    private static List<String> tokenize(String command) {
         if (command == null || command.length() == 0)
             return null;
 
@@ -50,73 +50,84 @@ public class Parser {
         PASSWORD,
         PAUSE,
         PREVIOUS,
-        STATUS
+        STATUS,
+
+        DEBUG
     }
 
-    public static CommandLine parse(List<String> cmdline)
+    public static CommandLine parse(String command)
             throws ProtocolException {
+        List<String> cmdline = Parser.tokenize(command);
         try {
             switch (COMMAND.valueOf(cmdline.get(0).toUpperCase())) {
+                case DEBUG:
+                    return new CommandLine(cmdline, Permission.PERMISSION_NONE, 0, 0) {
+                        @Override
+                        public void executeCommand(State state) throws ProtocolException {
+                            state.send(new ProtocolMessage(String.format("authenticated: %s", state.isAuthenticated())));
+                            state.send(new ProtocolOK());
+                        }
+                    };
                 case CLOSE:
                     return new CommandLine(cmdline, Permission.PERMISSION_NONE, 0, 0) {
                         @Override
-                        public void executeCommand(Handle handle) throws ProtocolException {
-                            handle.close();
+                        public void executeCommand(State state) throws ProtocolException {
+                            state.close();
                         }
                     };
                 case CURRENTSONG:
                     return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
-                        public void executeCommand(Handle handle) throws ProtocolException {
-                            handle.send(new ProtocolMessage(String.format("Title: %s",
-                                    State.trackIntent.getBundleExtra(PowerampAPI.TRACK).getString(PowerampAPI.Track.TITLE))));
-                            handle.send(new ProtocolOK());
+                        public void executeCommand(State state) throws ProtocolException {
+                            state.send(new ProtocolMessage(String.format("Title: %s",
+                                    be.thalarion.android.powerampd.State.trackIntent.getBundleExtra(PowerampAPI.TRACK).getString(PowerampAPI.Track.TITLE))));
+                            state.send(new ProtocolOK());
                         }
                     };
                 case NEXT:
                     return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 0) {
                         @Override
-                        public void executeCommand(Handle handle) throws ProtocolException {
-                            handle.command(PowerampAPI.Commands.NEXT);
-                            handle.send(new ProtocolOK());
+                        public void executeCommand(State state) throws ProtocolException {
+                            state.command(PowerampAPI.Commands.NEXT);
+                            state.send(new ProtocolOK());
                         }
                     };
                 case PASSWORD:
                     return new CommandLine(cmdline, Permission.PERMISSION_NONE, 1, 1) {
                         @Override
-                        public void executeCommand(Handle handle) throws ProtocolException {
-                            handle.authenticate(cmdline.get(0)); // throws ProtocolException
-                            handle.send(new ProtocolOK());
+                        public void executeCommand(State state) throws ProtocolException {
+                            state.authenticate(cmdline.get(0)); // throws ProtocolException
+                            state.send(new ProtocolOK());
                         }
                     };
                 case PAUSE:
                     return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 1) {
                         @Override
-                        public void executeCommand(Handle handle) throws ProtocolException {
+                        public void executeCommand(State state) throws ProtocolException {
                             if (cmdline.size() > 1) {
                                 if (cmdline.get(1).equals("0")) {
-                                    handle.command(PowerampAPI.Commands.RESUME);
+                                    state.command(PowerampAPI.Commands.RESUME);
                                 } else if (cmdline.get(1).equals("1")) {
-                                    handle.command(PowerampAPI.Commands.PAUSE);
+                                    state.command(PowerampAPI.Commands.PAUSE);
                                 } else throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                                         String.format("Boolean (0/1) expected: %s", cmdline.get(1)));
-                            } else handle.command(PowerampAPI.Commands.TOGGLE_PLAY_PAUSE);
-                            handle.send(new ProtocolOK());
+                            } else state.command(PowerampAPI.Commands.TOGGLE_PLAY_PAUSE);
+                            state.send(new ProtocolOK());
                         }
                     };
                 case PREVIOUS:
                     return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 0) {
                         @Override
-                        public void executeCommand(Handle handle) throws ProtocolException {
-                            handle.command(PowerampAPI.Commands.PREVIOUS);
-                            handle.send(new ProtocolOK());
+                        public void executeCommand(State state) throws ProtocolException {
+                            state.command(PowerampAPI.Commands.PREVIOUS);
+                            state.send(new ProtocolOK());
                         }
                     };
                 case STATUS:
                     return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
-                        public void executeCommand(Handle handle) throws ProtocolException {
-                            handle.send(new ProtocolOK());
+                        public void executeCommand(State state) throws ProtocolException {
+                            state.send(new ProtocolOK());
                         }
                     };
                 default:

@@ -13,10 +13,10 @@ public class CommandList implements Command {
         this.list = new ArrayList<Command>();
     }
 
-    public void execute(Handle handle)
+    public void execute(State state)
             throws ProtocolException {
         for (Command command: list)
-            command.execute(handle);
+            command.execute(state);
     }
 
 }

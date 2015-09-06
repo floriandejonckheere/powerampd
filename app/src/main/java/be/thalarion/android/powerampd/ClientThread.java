@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
-import be.thalarion.android.powerampd.command.Handle;
+import be.thalarion.android.powerampd.command.Command;
+import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.command.CommandLine;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
@@ -17,37 +18,34 @@ import be.thalarion.android.powerampd.protocol.ProtocolOK;
  */
 public class ClientThread implements Runnable {
 
-    private Handle handle;
+    private State state;
 
     public ClientThread(Context context, Socket socket) {
-        this.handle = new Handle(context, socket);
+        this.state = new State(context, socket);
     }
 
     @Override
     public void run() {
         try {
             // MPD protocol version
-            handle.send(new ProtocolOK("MPD 0.19.0"));
+            state.send(new ProtocolOK("MPD 0.19.0"));
 
             while (!Thread.currentThread().isInterrupted()) {
-                String line = handle.readLine();
+                String line = state.readLine();
                 if (line == null || line.length() == 0) {
-                    Log.i("powerampd", "Empty line");
-                    handle.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, "No command given"));
+                    state.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, "No command given"));
                     break;
                 } else try {
-                    List<String> cmdline = Parser.tokenize(line);
-                    CommandLine commandLine = Parser.parse(cmdline);
-                    commandLine.execute(handle);
+                    Command command = Parser.parse(line);
+                    command.execute(state);
                 } catch (ProtocolException e) {
-                    // Unknown, malformed or not implemented command
-                    handle.send(e);
+                    state.send(e);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        handle.close();
+        state.close();
     }
 
 }

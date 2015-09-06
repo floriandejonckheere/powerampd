@@ -18,7 +18,10 @@ import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 
-public class Handle {
+/**
+ * Application state of client-server communication
+ */
+public class State {
 
     private Context context;
     private Socket socket;
@@ -27,9 +30,10 @@ public class Handle {
     private BufferedWriter writer;
 
     // TODO: replace by PasswordEntry
+    private boolean authenticated = false;
     private List<Permission> permissions;
 
-    public Handle(Context context, Socket socket) {
+    public State(Context context, Socket socket) {
         this.context = context;
         this.socket = socket;
 
@@ -42,6 +46,10 @@ public class Handle {
             e.printStackTrace();
             close();
         }
+    }
+
+    public boolean isAuthenticated() {
+        return authenticated;
     }
 
     public String readLine()
@@ -76,6 +84,7 @@ public class Handle {
         permissions.add(Permission.PERMISSION_READ);
         permissions.add(Permission.PERMISSION_CONTROL);
         if (password.equals("password")) {
+            authenticated = true;
             return permissions;
         } else throw new ProtocolException(ProtocolException.ACK_ERROR_PASSWORD, "incorrect password");
     }
@@ -84,10 +93,12 @@ public class Handle {
         if (permission == Permission.PERMISSION_NONE)
             return true;
 
-        for (int i = 0; i < permissions.size(); i++) {
-            if (permissions.get(i).equals(permission))
-                return true;
-        }
+        // TODO: replace stub
+        if (authenticated)
+            for (int i = 0; i < permissions.size(); i++) {
+                if (permissions.get(i).equals(permission))
+                    return true;
+            }
 
         return false;
     }

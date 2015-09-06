@@ -9,36 +9,35 @@ public abstract class CommandLine implements Command {
 
     protected final List<String> cmdline;
     protected final Permission permission;
-    private final int minArgs;
-    private final int maxArgs;
 
     public CommandLine(List<String> cmdline, Permission permission, int minArgs, int maxArgs)
             throws ProtocolException {
         this.cmdline = cmdline;
         this.permission = permission;
-        this.minArgs = minArgs;
-        this.maxArgs = maxArgs;
 
-        if (this.minArgs == this.maxArgs && (cmdline.size() - 1) != this.minArgs) {
-            throw new ProtocolException(ProtocolException.ACK_ERROR_ARG,
+        if (minArgs == maxArgs && (cmdline.size() - 1) != minArgs) {
+            throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                     String.format("wrong number of arguments for \"%s\"", cmdline.get(0)));
-        } else if ((cmdline.size() - 1) < this.minArgs) {
-            throw new ProtocolException(ProtocolException.ACK_ERROR_ARG,
+        } else if ((cmdline.size() - 1) < minArgs) {
+            throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                     String.format("too few arguments for \"%s\"", cmdline.get(0)));
-        } else if ((cmdline.size() - 1) > this.maxArgs && this.maxArgs != 0) {
-            throw new ProtocolException(ProtocolException.ACK_ERROR_ARG,
+        } else if ((cmdline.size() - 1) > maxArgs && maxArgs != 0) {
+            throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                     String.format("too many arguments for \"%s\"", cmdline.get(0)));
         }
     }
 
     @Override
-    public void execute(Handle handle)
+    public void execute(State state)
             throws ProtocolException {
-        handle.authorize(permission); // throws ProtocolException
-        executeCommand(handle); // throws ProtocolException
+        if (!state.authorize(permission))
+            throw new ProtocolException(ProtocolException.ACK_ERROR_PERMISSION, cmdline.get(0),
+                    String.format("you don't have permission for \"%s\"", cmdline.get(0)));
+
+        executeCommand(state); // throws ProtocolException
     }
 
-    public abstract void executeCommand(Handle handle)
+    public abstract void executeCommand(State state)
             throws ProtocolException;
 
 }
