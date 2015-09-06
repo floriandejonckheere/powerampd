@@ -7,4 +7,5 @@ public interface Command {
 
     public void execute(Handle handle)
             throws ProtocolException;
+
 }

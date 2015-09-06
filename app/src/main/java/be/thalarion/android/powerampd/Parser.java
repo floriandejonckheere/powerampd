@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import be.thalarion.android.powerampd.command.Handle;
-import be.thalarion.android.powerampd.command.SpecificCommand;
+import be.thalarion.android.powerampd.command.CommandLine;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
@@ -53,46 +53,46 @@ public class Parser {
         STATUS
     }
 
-    public static SpecificCommand parse(List<String> cmdline)
+    public static CommandLine parse(List<String> cmdline)
             throws ProtocolException {
         try {
             switch (COMMAND.valueOf(cmdline.get(0).toUpperCase())) {
                 case CLOSE:
-                    return new SpecificCommand(cmdline, Permission.PERMISSION_NONE, 0, 0) {
+                    return new CommandLine(cmdline, Permission.PERMISSION_NONE, 0, 0) {
                         @Override
-                        public void execute(Handle handle) throws ProtocolException {
+                        public void executeCommand(Handle handle) throws ProtocolException {
                             handle.close();
                         }
                     };
                 case CURRENTSONG:
-                    return new SpecificCommand(cmdline, Permission.PERMISSION_READ, 0, 0) {
+                    return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
-                        public void execute(Handle handle) throws ProtocolException {
+                        public void executeCommand(Handle handle) throws ProtocolException {
                             handle.send(new ProtocolMessage(String.format("Title: %s",
                                     State.trackIntent.getBundleExtra(PowerampAPI.TRACK).getString(PowerampAPI.Track.TITLE))));
                             handle.send(new ProtocolOK());
                         }
                     };
                 case NEXT:
-                    return new SpecificCommand(cmdline, Permission.PERMISSION_CONTROL, 0, 0) {
+                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 0) {
                         @Override
-                        public void execute(Handle handle) throws ProtocolException {
+                        public void executeCommand(Handle handle) throws ProtocolException {
                             handle.command(PowerampAPI.Commands.NEXT);
                             handle.send(new ProtocolOK());
                         }
                     };
                 case PASSWORD:
-                    return new SpecificCommand(cmdline, Permission.PERMISSION_NONE, 1, 1) {
+                    return new CommandLine(cmdline, Permission.PERMISSION_NONE, 1, 1) {
                         @Override
-                        public void execute(Handle handle) throws ProtocolException {
-                            handle.authenticate(cmdline.get(0));
+                        public void executeCommand(Handle handle) throws ProtocolException {
+                            handle.authenticate(cmdline.get(0)); // throws ProtocolException
                             handle.send(new ProtocolOK());
                         }
                     };
                 case PAUSE:
-                    return new SpecificCommand(cmdline, Permission.PERMISSION_CONTROL, 0, 1) {
+                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 1) {
                         @Override
-                        public void execute(Handle handle) throws ProtocolException {
+                        public void executeCommand(Handle handle) throws ProtocolException {
                             if (cmdline.size() > 1) {
                                 if (cmdline.get(1).equals("0")) {
                                     handle.command(PowerampAPI.Commands.RESUME);
@@ -105,17 +105,17 @@ public class Parser {
                         }
                     };
                 case PREVIOUS:
-                    return new SpecificCommand(cmdline, Permission.PERMISSION_CONTROL, 0, 0) {
+                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 0) {
                         @Override
-                        public void execute(Handle handle) throws ProtocolException {
+                        public void executeCommand(Handle handle) throws ProtocolException {
                             handle.command(PowerampAPI.Commands.PREVIOUS);
                             handle.send(new ProtocolOK());
                         }
                     };
                 case STATUS:
-                    return new SpecificCommand(cmdline, Permission.PERMISSION_READ, 0, 0) {
+                    return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
-                        public void execute(Handle handle) throws ProtocolException {
+                        public void executeCommand(Handle handle) throws ProtocolException {
                             handle.send(new ProtocolOK());
                         }
                     };

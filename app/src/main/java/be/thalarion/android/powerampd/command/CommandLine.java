@@ -5,14 +5,14 @@ import java.util.List;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 
-public abstract class SpecificCommand implements Command {
+public abstract class CommandLine implements Command {
 
     protected final List<String> cmdline;
-    private final Permission permission;
+    protected final Permission permission;
     private final int minArgs;
     private final int maxArgs;
 
-    public SpecificCommand(List<String> cmdline, Permission permission, int minArgs, int maxArgs)
+    public CommandLine(List<String> cmdline, Permission permission, int minArgs, int maxArgs)
             throws ProtocolException {
         this.cmdline = cmdline;
         this.permission = permission;
@@ -34,6 +34,11 @@ public abstract class SpecificCommand implements Command {
     @Override
     public void execute(Handle handle)
             throws ProtocolException {
-        handle.authorize(permission);
+        handle.authorize(permission); // throws ProtocolException
+        executeCommand(handle); // throws ProtocolException
     }
+
+    public abstract void executeCommand(Handle handle)
+            throws ProtocolException;
+
 }

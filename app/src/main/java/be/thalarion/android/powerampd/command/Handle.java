@@ -70,10 +70,14 @@ public class Handle {
         }
     }
 
-    public void authenticate(String password) {
+    public List<Permission> authenticate(String password)
+        throws ProtocolException {
         // TODO: replace stub
         permissions.add(Permission.PERMISSION_READ);
         permissions.add(Permission.PERMISSION_CONTROL);
+        if (password.equals("password")) {
+            return permissions;
+        } else throw new ProtocolException(ProtocolException.ACK_ERROR_PASSWORD, "incorrect password");
     }
 
     public boolean authorize(Permission permission) {

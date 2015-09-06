@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import be.thalarion.android.powerampd.protocol.ProtocolException;
-import be.thalarion.android.powerampd.ClientThread;
 
 public class CommandList implements Command {
 
@@ -14,11 +13,10 @@ public class CommandList implements Command {
         this.list = new ArrayList<Command>();
     }
 
-    public void execute(ClientThread.Handle handle)
-        throws ProtocolException {
-        for (Command command: list) {
+    public void execute(Handle handle)
+            throws ProtocolException {
+        for (Command command: list)
             command.execute(handle);
-        }
     }
 
 }

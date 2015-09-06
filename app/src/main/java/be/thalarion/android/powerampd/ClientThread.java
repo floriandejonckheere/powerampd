@@ -1,21 +1,14 @@
 package be.thalarion.android.powerampd;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
-import com.maxmpz.poweramp.player.PowerampAPI;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
 
 import be.thalarion.android.powerampd.command.Handle;
-import be.thalarion.android.powerampd.command.SpecificCommand;
+import be.thalarion.android.powerampd.command.CommandLine;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
 
@@ -44,8 +37,8 @@ public class ClientThread implements Runnable {
                     break;
                 } else try {
                     List<String> cmdline = Parser.tokenize(line);
-                    SpecificCommand specificCommand = Parser.parse(cmdline);
-                    specificCommand.execute(handle);
+                    CommandLine commandLine = Parser.parse(cmdline);
+                    commandLine.execute(handle);
                 } catch (ProtocolException e) {
                     // Unknown, malformed or not implemented command
                     handle.send(e);
