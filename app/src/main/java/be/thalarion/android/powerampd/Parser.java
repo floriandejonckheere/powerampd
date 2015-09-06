@@ -96,7 +96,10 @@ public class Parser {
                     return new CommandLine(cmdline, Permission.PERMISSION_NONE, 1, 1) {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
-                            state.authenticate(cmdline.get(0)); // throws ProtocolException
+                            if (!state.authenticate(cmdline.get(1)))
+                                throw new ProtocolException(ProtocolException.ACK_ERROR_PASSWORD, cmdline.get(0),
+                                        "incorrect password");
+
                             state.send(new ProtocolOK());
                         }
                     };
@@ -127,6 +130,19 @@ public class Parser {
                     return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
+                            state.send(new ProtocolMessage(String.format("volume: %d", -1)));
+                            state.send(new ProtocolMessage(String.format("repeat: %d", 0)));
+                            state.send(new ProtocolMessage(String.format("random: %d", 0)));
+                            state.send(new ProtocolMessage(String.format("single: %d", 0)));
+                            state.send(new ProtocolMessage(String.format("consume: %d", 0)));
+                            state.send(new ProtocolMessage(String.format("playlist: %d", 0)));
+                            state.send(new ProtocolMessage(String.format("playlistlength: %d", 0)));
+                            state.send(new ProtocolMessage(String.format("mixrampdb: %d", 0)));
+                            state.send(new ProtocolMessage(String.format("state: %s", "stop")));
+                            state.send(new ProtocolMessage(String.format("song: %s", 0)));
+                            state.send(new ProtocolMessage(String.format("songid: %s", 0)));
+                            state.send(new ProtocolMessage(String.format("nextsong: %s", 0)));
+                            state.send(new ProtocolMessage(String.format("nextsongid: %s", 0)));
                             state.send(new ProtocolOK());
                         }
                     };

@@ -7,8 +7,5 @@ import android.content.Intent;
  */
 public class State {
 
-    public static Intent trackIntent;
-    public static Intent statusIntent;
-    public static Intent playingModeIntent;
 
 }

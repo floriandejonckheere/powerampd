@@ -23,6 +23,14 @@ import be.thalarion.android.powerampd.protocol.ProtocolException;
  */
 public class State {
 
+    /**
+     * Poweramp state
+     */
+    public static Intent trackIntent;
+    public static Intent statusIntent;
+    public static Intent playingModeIntent;
+
+    
     private Context context;
     private Socket socket;
 
@@ -78,15 +86,15 @@ public class State {
         }
     }
 
-    public List<Permission> authenticate(String password)
+    public boolean authenticate(String password)
         throws ProtocolException {
         // TODO: replace stub
         permissions.add(Permission.PERMISSION_READ);
         permissions.add(Permission.PERMISSION_CONTROL);
-        if (password.equals("password")) {
+        if (password.equals("password"))
             authenticated = true;
-            return permissions;
-        } else throw new ProtocolException(ProtocolException.ACK_ERROR_PASSWORD, "incorrect password");
+
+        return authenticated;
     }
 
     public boolean authorize(Permission permission) {
