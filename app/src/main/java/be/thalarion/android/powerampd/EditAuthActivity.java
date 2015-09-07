@@ -6,6 +6,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,6 +14,9 @@ public class EditAuthActivity extends PreferenceActivity {
 
     private EditTextPreference password;
     private CheckBoxPreference permRead, permAdd, permControl, permAdmin;
+    private PasswordEntry entry;
+
+    public static final int RESULT_DELETED = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +32,20 @@ public class EditAuthActivity extends PreferenceActivity {
         permControl = (CheckBoxPreference) findPreference("pref_permission_control");
         permAdmin   = (CheckBoxPreference) findPreference("pref_permission_admin");
 
+        entry = (PasswordEntry) getIntent().getSerializableExtra("passwordEntry");
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                .putString("pref_password", entry.getPassword())
+                .putBoolean("pref_permission_read", entry.read)
+                .putBoolean("pref_permission_add", entry.add)
+                .putBoolean("pref_permission_control", entry.control)
+                .putBoolean("pref_permission_admin", entry.admin)
+                .commit();
+
         findPreference("pref_password").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (((String) o).length() == 0) {
-                    Toast.makeText(getApplicationContext(), R.string.toast_error_password_length, Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), R.string.toast_error_password_length, Toast.LENGTH_LONG).show();
                     return false;
                 }
                 return true;
@@ -49,7 +62,12 @@ public class EditAuthActivity extends PreferenceActivity {
                         permAdd.isChecked(),
                         permControl.isChecked(),
                         permAdmin.isChecked()
-                ).toString());
+                ));
+
+                int index = getIntent().getIntExtra("index", -1);
+                if (index != -1)
+                    intent.putExtra("index", index);
+
                 setResult(RESULT_OK, intent);
                 finish();
             }
@@ -59,6 +77,17 @@ public class EditAuthActivity extends PreferenceActivity {
             @Override
             public void onClick(View view) {
                 setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+
+        findViewById(R.id.button_delete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                int index = getIntent().getIntExtra("index", -1);
+                intent.putExtra("index", index);
+                setResult(RESULT_DELETED, intent);
                 finish();
             }
         });

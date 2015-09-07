@@ -10,13 +10,12 @@ import java.util.List;
 public class PasswordEntry implements Serializable {
 
     private String password;
-    protected boolean read;
-    protected boolean add;
-    protected boolean control;
-    protected boolean admin;
+    protected boolean read = false;
+    protected boolean add = false;
+    protected boolean control = false;
+    protected boolean admin = false;
 
     public PasswordEntry(String string) {
-        Log.i("powerampd", string);
         if(string != null) {
             String[] split = string.split("@");
             this.password = split[0];
