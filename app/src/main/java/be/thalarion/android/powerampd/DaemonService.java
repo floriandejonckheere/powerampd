@@ -158,6 +158,8 @@ public class DaemonService extends Service {
                 notificationManager.cancel(notificationID);
             } else {
                 Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                resultIntent.setAction(Intent.ACTION_MAIN);
+                resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
                 PendingIntent intent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 notificationBuilder
                         .setContentTitle(this.title)

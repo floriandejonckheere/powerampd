@@ -4,17 +4,42 @@
     <string name="notification_title_running">PoweraMPD running</string>
     <string name="notification_text_running">Listening on </string>
 
-    <string name="toast_error_bind">PoweraMPD: error binding address</string>
+    <string name="toast_error_bind">PoweraMPD: error binding to address</string>
     <string name="toast_error_client">PoweraMPD: error connecting to client</string>
+    <string name="toast_error_password_length">Password must be at least one character</string>
+    <string name="toast_error_cancel">Edit cancelled</string>
 
-    <string name="title_activity_main">PoweraMPD</string>
     <string name="title_settings">Settings</string>
-    <string name="title_stats">Statistics</string>
     <string name="title_auth">Authentication/authorization</string>
+    <string name="title_auth_edit">Edit password</string>
+    <string name="title_auth_entries">Passwords</string>
 
     <string name="pref_enabled">Enabled</string>
-    <string name="pref_enabled_desc">Start server when network connected</string>
+    <string name="pref_enabled_desc">Start server when connected to Wi-Fi</string>
 
     <string name="pref_port">Port</string>
     <string name="pref_port_default">6600</string>
+
+    <string name="pref_auth_enabled">Enable authentication/authorization</string>
+    <string name="pref_auth_enabled_desc">Require password for communication with the server</string>
+
+    <string name="pref_permission_default">Default permissions</string>
+
+    <string name="pref_password">Password</string>
+    <string name="pref_password_default">&lt;password&gt;</string>
+
+    <string name="pref_permission_read">Read</string>
+    <string name="pref_permission_read_desc">Allow reading the database, displaying the current playlist and status of MPD</string>
+    <string name="pref_permission_add">Add</string>
+    <string name="pref_permission_add_desc">Allow adding songs and loading playlists</string>
+    <string name="pref_permission_control">Control</string>
+    <string name="pref_permission_control_desc">Allow player and playlist manipulation</string>
+    <string name="pref_permission_admin">Admin</string>
+    <string name="pref_permission_admin_desc">Allow all manipulations</string>
+
+    <string name="action_add">Add</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_add_password">Add password</string>
 </resources>

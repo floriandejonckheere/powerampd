@@ -2,6 +2,7 @@ package be.thalarion.android.powerampd;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.util.Log;
 
 public class MainActivity extends PreferenceActivity {
 
@@ -54,7 +54,7 @@ public class MainActivity extends PreferenceActivity {
         if (!preference.hasKey()) return true;
 
         if (preference.getKey().equals("pref_sub_auth")) {
-//            startActivity(new Intent(getApplicationContext(), AuthActivity.class));
+            startActivity(new Intent(getApplicationContext(), AuthActivity.class));
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
@@ -63,7 +63,7 @@ public class MainActivity extends PreferenceActivity {
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    protected static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -97,16 +97,20 @@ public class MainActivity extends PreferenceActivity {
      *
      * @see #sBindPreferenceSummaryToValueListener
      */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
+    protected static void bindPreferenceSummaryToValue(Preference preference) {
+        bindPreferenceSummaryToValue(preference,
+                PreferenceManager
+                        .getDefaultSharedPreferences(preference.getContext()));
+    }
+
+    protected static void bindPreferenceSummaryToValue(Preference preference, SharedPreferences sharedPreferences) {
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
         // Trigger the listener immediately with the preference's
         // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+                sharedPreferences.getString(preference.getKey(), ""));
     }
 
 }

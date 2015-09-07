@@ -5,8 +5,8 @@ import com.maxmpz.poweramp.player.PowerampAPI;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.command.CommandLine;
+import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
@@ -80,7 +80,7 @@ public class Parser {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
                             state.send(new ProtocolMessage(String.format("Title: %s",
-                                    be.thalarion.android.powerampd.State.trackIntent.getBundleExtra(PowerampAPI.TRACK).getString(PowerampAPI.Track.TITLE))));
+                                    State.trackIntent.getBundleExtra(PowerampAPI.TRACK).getString(PowerampAPI.Track.TITLE))));
                             state.send(new ProtocolOK());
                         }
                     };
