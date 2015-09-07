@@ -1,19 +1,22 @@
 package be.thalarion.android.powerampd;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import java.io.Serializable;
+import com.orm.SugarRecord;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class PasswordEntry implements Serializable {
+public class PasswordEntry extends SugarRecord<PasswordEntry> {
 
-    private String password;
-    protected boolean read = false;
-    protected boolean add = false;
-    protected boolean control = false;
-    protected boolean admin = false;
+    protected String password;
+    protected boolean readPerm = false;
+    protected boolean addPerm = false;
+    protected boolean controlPerm = false;
+    protected boolean adminPerm = false;
+
+    public PasswordEntry() {
+    }
 
     public PasswordEntry(String string) {
         if(string != null) {
@@ -22,35 +25,31 @@ public class PasswordEntry implements Serializable {
             if (split.length > 1)
                 for (String str : split[1].split(",")) {
                     if (str.equals("read"))
-                        read = true;
+                        readPerm = true;
                     else if (str.equals("add"))
-                        add = true;
+                        addPerm = true;
                     else if (str.equals("control"))
-                        control = true;
+                        controlPerm = true;
                     else if (str.equals("admin"))
-                        admin = true;
+                        adminPerm = true;
                 }
         }
     }
 
-    public PasswordEntry(String password, boolean read, boolean add, boolean control, boolean admin) {
+    public PasswordEntry(String password, boolean readPerm, boolean addPerm, boolean controlPerm, boolean adminPerm) {
         this.password = password;
-        this.read = read;
-        this.add = add;
-        this.control = control;
-        this.admin = admin;
-    }
-
-    public String getPassword() {
-        return password;
+        this.readPerm = readPerm;
+        this.addPerm = addPerm;
+        this.controlPerm = controlPerm;
+        this.adminPerm = adminPerm;
     }
 
     public String getPermissionSummary() {
         List<String> list = new ArrayList<String>();
-        if(read)    list.add("read");
-        if(add)     list.add("add");
-        if(control) list.add("control");
-        if(admin)   list.add("admin");
+        if(readPerm)    list.add("read");
+        if(addPerm)     list.add("add");
+        if(controlPerm) list.add("control");
+        if(adminPerm)   list.add("admin");
 
         return TextUtils.join(", ", list);
     }
