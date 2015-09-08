@@ -14,6 +14,7 @@ There are a few differences in protocol response with the official MPD server. T
 **v0.1**
 
 - MPD Protocol parser
+    - Implemented commands: close, next, previous, pause
 
 **v0.2**
 
