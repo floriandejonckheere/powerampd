@@ -1,5 +1,7 @@
 package be.thalarion.android.powerampd.command;
 
+import android.preference.PreferenceManager;
+
 import java.util.List;
 
 import be.thalarion.android.powerampd.protocol.Permission;
@@ -30,9 +32,10 @@ public abstract class CommandLine implements Command {
     @Override
     public void execute(State state)
             throws ProtocolException {
-        if (!state.authorize(permission))
-            throw new ProtocolException(ProtocolException.ACK_ERROR_PERMISSION, cmdline.get(0),
-                    String.format("you don't have permission for \"%s\"", cmdline.get(0)));
+        if (state.getPreferences().getBoolean("pref_auth_enabled", true))
+            if (!state.authorize(permission))
+                throw new ProtocolException(ProtocolException.ACK_ERROR_PERMISSION, cmdline.get(0),
+                        String.format("you don't have permission for \"%s\"", cmdline.get(0)));
 
         executeCommand(state); // throws ProtocolException
     }

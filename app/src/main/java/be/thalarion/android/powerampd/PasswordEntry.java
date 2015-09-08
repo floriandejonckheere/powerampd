@@ -7,6 +7,8 @@ import com.orm.SugarRecord;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.thalarion.android.powerampd.protocol.Permission;
+
 public class PasswordEntry extends SugarRecord<PasswordEntry> {
 
     protected String password;
@@ -52,6 +54,23 @@ public class PasswordEntry extends SugarRecord<PasswordEntry> {
         if(adminPerm)   list.add("admin");
 
         return TextUtils.join(", ", list);
+    }
+
+    public boolean can(Permission permission) {
+        switch (permission) {
+            case PERMISSION_NONE:
+                return true;
+            case PERMISSION_READ:
+                return readPerm;
+            case PERMISSION_ADD:
+                return addPerm;
+            case PERMISSION_CONTROL:
+                return controlPerm;
+            case PERMISSION_ADMIN:
+                return adminPerm;
+            default:
+                return false;
+        }
     }
 
     @Override

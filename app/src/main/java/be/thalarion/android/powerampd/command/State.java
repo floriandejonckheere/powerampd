@@ -2,6 +2,8 @@ package be.thalarion.android.powerampd.command;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
@@ -14,6 +16,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.thalarion.android.powerampd.PasswordEntry;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
@@ -30,22 +33,17 @@ public class State {
     public static Intent statusIntent;
     public static Intent playingModeIntent;
 
-    
     private Context context;
     private Socket socket;
 
     private BufferedReader reader;
     private BufferedWriter writer;
 
-    // TODO: replace by PasswordEntry
-    private boolean authenticated = false;
-    private List<Permission> permissions;
+    private PasswordEntry passwordEntry;
 
     public State(Context context, Socket socket) {
         this.context = context;
         this.socket = socket;
-
-        this.permissions = new ArrayList<Permission>();
 
         try {
             this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -57,7 +55,7 @@ public class State {
     }
 
     public boolean isAuthenticated() {
-        return authenticated;
+        return (passwordEntry != null);
     }
 
     public String readLine()
@@ -87,28 +85,25 @@ public class State {
     }
 
     public boolean authenticate(String password)
-        throws ProtocolException {
-        // TODO: replace stub
-        permissions.add(Permission.PERMISSION_READ);
-        permissions.add(Permission.PERMISSION_CONTROL);
-        if (password.equals("password"))
-            authenticated = true;
+            throws ProtocolException {
+        List<PasswordEntry> entries = PasswordEntry.find(PasswordEntry.class, "password = ?", password);
+        if (entries == null || entries.size() == 0)
+            return false;
 
-        return authenticated;
+        // Only the first entry is accepted
+        passwordEntry = entries.get(0);
+
+        return true;
     }
 
     public boolean authorize(Permission permission) {
         if (permission == Permission.PERMISSION_NONE)
             return true;
 
-        // TODO: replace stub
-        if (authenticated)
-            for (int i = 0; i < permissions.size(); i++) {
-                if (permissions.get(i).equals(permission))
-                    return true;
-            }
+        if (!isAuthenticated())
+            return false;
 
-        return false;
+        return passwordEntry.can(permission);
     }
 
     public void command(int action) {
@@ -116,5 +111,9 @@ public class State {
                 .setPackage(PowerampAPI.PACKAGE_NAME)
                 .putExtra(PowerampAPI.COMMAND, action)
         );
+    }
+
+    public SharedPreferences getPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 }
