@@ -22,8 +22,6 @@ public class EditAuthActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings_auth_edit);
         setContentView(R.layout.activity_auth_edit);
 
-        MainActivity.bindPreferenceSummaryToValue(findPreference("pref_password"));
-
         password    = (EditTextPreference) findPreference("pref_password");
         permRead    = (CheckBoxPreference) findPreference("pref_permission_read");
         permAdd     = (CheckBoxPreference) findPreference("pref_permission_add");
@@ -34,7 +32,7 @@ public class EditAuthActivity extends PreferenceActivity {
         if (entry == null) {
             // New entry
             entry = new PasswordEntry(getApplicationContext().getString(R.string.pref_password_default), false, false, false, false);
-            ((Button) findViewById(R.id.button_delete)).setEnabled(false);
+            findViewById(R.id.button_delete).setEnabled(false);
         }
 
         password.setText(entry.password);
@@ -89,6 +87,8 @@ public class EditAuthActivity extends PreferenceActivity {
                 finish();
             }
         });
+
+        MainActivity.bindPreferenceSummaryToValue(findPreference("pref_password"));
     }
 
 }

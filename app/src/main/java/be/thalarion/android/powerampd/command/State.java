@@ -39,11 +39,12 @@ public class State {
     private BufferedReader reader;
     private BufferedWriter writer;
 
-    private PasswordEntry passwordEntry;
+    private long passwordEntryId;
 
     public State(Context context, Socket socket) {
         this.context = context;
         this.socket = socket;
+        this.passwordEntryId = -1;
 
         try {
             this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -55,7 +56,7 @@ public class State {
     }
 
     public boolean isAuthenticated() {
-        return (passwordEntry != null);
+        return (passwordEntryId != -1);
     }
 
     public String readLine()
@@ -91,19 +92,38 @@ public class State {
             return false;
 
         // Only the first entry is accepted
-        passwordEntry = entries.get(0);
+        passwordEntryId = entries.get(0).getId();
 
         return true;
     }
 
     public boolean authorize(Permission permission) {
-        if (permission == Permission.PERMISSION_NONE)
-            return true;
+        // Check permissions only if it is enabled
+        if (getPreferences().getBoolean("pref_auth_enabled", true)) {
+            if (permission == Permission.PERMISSION_NONE)
+                return true;
 
-        if (!isAuthenticated())
-            return false;
+            // Check default permissions
+            if (!isAuthenticated()) {
+                switch (permission) {
+                    case PERMISSION_READ:
+                        return getPreferences().getBoolean("pref_permission_read_default", false);
+                    case PERMISSION_ADD:
+                        return getPreferences().getBoolean("pref_permission_add_default", false);
+                    case PERMISSION_CONTROL:
+                        return getPreferences().getBoolean("pref_permission_control_default", false);
+                    case PERMISSION_ADMIN:
+                        return getPreferences().getBoolean("pref_permission_admin_default", false);
+                }
+            } else {
+                PasswordEntry entry = PasswordEntry.findById(PasswordEntry.class, passwordEntryId);
+                if (entry == null)
+                    return false;
 
-        return passwordEntry.can(permission);
+                return entry.can(permission);
+            }
+        }
+        return true;
     }
 
     public void command(int action) {

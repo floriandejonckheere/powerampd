@@ -16,25 +16,25 @@
             android:title="@string/pref_permission_default">
 
             <CheckBoxPreference
-                android:key="pref_permission_default_read"
+                android:key="pref_permission_read_default"
                 android:title="@string/pref_permission_read"
                 android:summary="@string/pref_permission_read_desc"
                 android:defaultValue="false" />
 
             <CheckBoxPreference
-                android:key="pref_permission_default_add"
+                android:key="pref_permission_add_default"
                 android:title="@string/pref_permission_add"
                 android:summary="@string/pref_permission_add_desc"
                 android:defaultValue="false" />
 
             <CheckBoxPreference
-                android:key="pref_permission_default_control"
+                android:key="pref_permission_control_default"
                 android:title="@string/pref_permission_control"
                 android:summary="@string/pref_permission_control_desc"
                 android:defaultValue="false" />
 
             <CheckBoxPreference
-                android:key="pref_permission_default_admin"
+                android:key="pref_permission_admin_default"
                 android:title="@string/pref_permission_admin"
                 android:summary="@string/pref_permission_admin_desc"
                 android:defaultValue="false" />

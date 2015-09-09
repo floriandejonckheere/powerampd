@@ -20,8 +20,8 @@
     <string name="pref_port">Port</string>
     <string name="pref_port_default">6600</string>
 
-    <string name="pref_auth_enabled">Enable authentication/authorization</string>
-    <string name="pref_auth_enabled_desc">Require password for communication with the server</string>
+    <string name="pref_auth_enabled">Require password</string>
+    <string name="pref_auth_enabled_desc">Enable client-server authentication/authorization</string>
 
     <string name="pref_permission_default">Default permissions</string>
 
