@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
@@ -75,9 +76,10 @@ public class State {
     }
 
     public void close() {
+        Log.i("powerampd-client", "Closing client socket");
         try {
-            reader.close();
-            writer.close();
+            if (reader != null) reader.close();
+            if (writer != null) writer.close();
             Thread.currentThread().interrupt();
             socket.close();
         } catch (IOException e) {

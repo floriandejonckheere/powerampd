@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.Formatter;
+import android.util.Log;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 import be.thalarion.android.powerampd.command.State;
 
@@ -92,6 +95,7 @@ public class DaemonService extends Service {
     @Override
     public void onDestroy() {
         if (serverThread != null) {
+            Log.i("powerampd-daemon", "Stopping service");
             // Set interrupt flag
             serverThread.interrupt();
             try {
@@ -124,6 +128,8 @@ public class DaemonService extends Service {
      * ServerThread - bind to TCP port and fork
      */
     class ServerThread implements Runnable {
+        private List<Socket> clientSockets = new ArrayList<Socket>();
+
         @Override
         public void run() {
             Socket socket;
@@ -131,12 +137,23 @@ public class DaemonService extends Service {
                 serverSocket = new ServerSocket(port);
                 while (!Thread.currentThread().isInterrupted()) {
                     socket = serverSocket.accept();
+                    clientSockets.add(socket);
                     new Thread(new ClientThread(getApplicationContext(), socket)).start();
                 }
             } catch (SocketException e) {
                 // Socket.close() called in service
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                Log.i("powerampd-server", "Stopping server thread and client threads");
+                for (Socket s: clientSockets) {
+                    if (!s.isClosed())
+                        try {
+                            s.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                }
             }
         }
     }

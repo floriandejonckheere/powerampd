@@ -18,7 +18,7 @@ import be.thalarion.android.powerampd.protocol.ProtocolOK;
  */
 public class ClientThread implements Runnable {
 
-    private State state;
+    protected State state;
 
     public ClientThread(Context context, Socket socket) {
         this.state = new State(context, socket);
@@ -43,9 +43,10 @@ public class ClientThread implements Runnable {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            // socket.close() called in ServerThread
+        } finally {
+            state.close();
         }
-        state.close();
     }
 
 }
