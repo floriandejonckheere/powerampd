@@ -1,15 +1,11 @@
 package be.thalarion.android.powerampd;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 
 import be.thalarion.android.powerampd.command.Command;
-import be.thalarion.android.powerampd.command.State;
-import be.thalarion.android.powerampd.command.CommandLine;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
 

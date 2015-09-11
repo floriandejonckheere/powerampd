@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd.command;
+package be.thalarion.android.powerampd;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,14 +27,7 @@ import be.thalarion.android.powerampd.protocol.ProtocolException;
  */
 public class State {
 
-    /**
-     * Poweramp state
-     */
-    public static Intent trackIntent;
-    public static Intent statusIntent;
-    public static Intent playingModeIntent;
-
-    private Context context;
+    protected Context context;
     private Socket socket;
 
     private BufferedReader reader;

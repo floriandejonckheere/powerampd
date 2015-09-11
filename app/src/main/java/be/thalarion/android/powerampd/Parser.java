@@ -1,12 +1,14 @@
 package be.thalarion.android.powerampd;
 
+import android.util.Log;
+
 import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatConversionException;
 import java.util.List;
 
 import be.thalarion.android.powerampd.command.CommandLine;
-import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
@@ -50,6 +52,7 @@ public class Parser {
         PASSWORD,
         PAUSE,
         PREVIOUS,
+        SETVOL,
         STATUS,
 
         DEBUG
@@ -86,7 +89,7 @@ public class Parser {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
                             state.send(new ProtocolMessage(String.format("Title: %s",
-                                    State.trackIntent.getBundleExtra(PowerampAPI.TRACK).getString(PowerampAPI.Track.TITLE))));
+                                    SystemState.getTrack().getString(PowerampAPI.Track.TITLE))));
                             state.send(new ProtocolOK());
                         }
                     };
@@ -132,11 +135,33 @@ public class Parser {
                             state.send(new ProtocolOK());
                         }
                     };
+                case SETVOL:
+                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 1, 1) {
+                        @Override
+                        public void executeCommand(State state) throws ProtocolException {
+                            try {
+                                int volume = Integer.parseInt(cmdline.get(1));
+                                if (volume > 100)
+                                    throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
+                                            "Invalid volume value");
+
+                                if (volume < 0)
+                                    throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
+                                            String.format("Integer expected: %s", cmdline.get(1)));
+                                SystemState.setVolume(state.context, volume);
+                                state.send(new ProtocolOK());
+                            } catch (NumberFormatException e) {
+                                throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
+                                        String.format("Integer expected: %s", cmdline.get(1)));
+                            }
+                        }
+                    };
                 case STATUS:
                     return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
-                            state.send(new ProtocolMessage(String.format("volume: %d", -1)));
+                            Log.i("powerampd", String.format("%f", SystemState.getVolume(state.context)));
+                            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.context)))));
                             state.send(new ProtocolMessage(String.format("repeat: %d", 0)));
                             state.send(new ProtocolMessage(String.format("random: %d", 0)));
                             state.send(new ProtocolMessage(String.format("single: %d", 0)));

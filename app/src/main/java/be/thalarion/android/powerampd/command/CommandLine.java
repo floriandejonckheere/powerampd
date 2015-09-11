@@ -1,9 +1,8 @@
 package be.thalarion.android.powerampd.command;
 
-import android.preference.PreferenceManager;
-
 import java.util.List;
 
+import be.thalarion.android.powerampd.State;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 

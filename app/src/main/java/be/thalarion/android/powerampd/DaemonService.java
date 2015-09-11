@@ -24,8 +24,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.thalarion.android.powerampd.command.State;
-
 public class DaemonService extends Service {
 
     private android.support.v4.app.NotificationCompat.Builder notificationBuilder;
@@ -54,19 +52,19 @@ public class DaemonService extends Service {
         this.trackBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                State.trackIntent = intent;
+                SystemState.trackIntent = intent;
             }
         };
         this.statusBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                State.statusIntent = intent;
+                SystemState.statusIntent = intent;
             }
         };
         this.playingModeBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                State.playingModeIntent = intent;
+                SystemState.playingModeIntent = intent;
             }
         };
     }
