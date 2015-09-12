@@ -54,6 +54,7 @@ public class Parser {
         PREVIOUS,
         SETVOL,
         STATUS,
+        VOLUME,
 
         DEBUG
     }
@@ -136,6 +137,7 @@ public class Parser {
                         }
                     };
                 case SETVOL:
+                case VOLUME:
                     return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 1, 1) {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
@@ -160,11 +162,10 @@ public class Parser {
                     return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
-                            Log.i("powerampd", String.format("%f", SystemState.getVolume(state.context)));
                             state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.context)))));
-                            state.send(new ProtocolMessage(String.format("repeat: %d", 0)));
-                            state.send(new ProtocolMessage(String.format("random: %d", 0)));
-                            state.send(new ProtocolMessage(String.format("single: %d", 0)));
+                            state.send(new ProtocolMessage(String.format("repeat: %d", SystemState.getRepeat())));
+                            state.send(new ProtocolMessage(String.format("random: %d", SystemState.getShuffle())));
+                            state.send(new ProtocolMessage(String.format("single: %d", SystemState.getSingle())));
                             state.send(new ProtocolMessage(String.format("consume: %d", 0)));
                             state.send(new ProtocolMessage(String.format("playlist: %d", 0)));
                             state.send(new ProtocolMessage(String.format("playlistlength: %d", 0)));

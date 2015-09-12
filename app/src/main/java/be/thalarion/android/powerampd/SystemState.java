@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.provider.MediaStore;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
@@ -20,18 +19,36 @@ public class SystemState {
     public static Intent statusIntent;
     public static Intent playingModeIntent;
 
-
-
-    /**
-     * Poweramp actions
-     */
-
     public static Bundle getTrack() {
         return trackIntent.getBundleExtra(PowerampAPI.TRACK);
     }
 
+    public static int getRepeat() {
+        switch (playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1)) {
+            case PowerampAPI.RepeatMode.REPEAT_NONE:
+                return 0;
+            default:
+                return 1;
+        }
+    }
+
+    public static int getShuffle() {
+        switch (playingModeIntent.getIntExtra(PowerampAPI.SHUFFLE, -1)) {
+            case PowerampAPI.ShuffleMode.SHUFFLE_NONE:
+                return 0;
+            default:
+                return 1;
+        }
+    }
+
+    public static int getSingle() {
+        if (playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_SONG)
+            return 1;
+        return 0;
+    }
+
     /**
-     * System actions
+     * System state
      */
 
     /**
@@ -41,8 +58,12 @@ public class SystemState {
      */
     public static double getVolume(Context context) {
         AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        return ((double) audio.getStreamVolume(AudioManager.STREAM_MUSIC) / audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+        return ((double) audio.getStreamVolume(AudioManager.STREAM_MUSIC) / audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) * 100;
     }
+
+    /**
+     * System actions
+     */
 
     /**
      * setVolume
