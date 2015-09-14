@@ -22,7 +22,12 @@ public class MainActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings);
 
         bindPreferenceSummaryToValue(findPreference("pref_port"));
-        bindPreferenceSummaryToValue(findPreference("pref_mdns_name"));
+        // Can't use multiple OnPreferenceChangeListeners, bind it manually
+        // bindPreferenceSummaryToValue(findPreference("pref_mdns_name"));
+        findPreference("pref_mdns_name").setSummary(
+                PreferenceManager.getDefaultSharedPreferences(this).getString(
+                        "pref_mdns_name",
+                        getString(R.string.pref_mdns_name_default)));
 
         findPreference("pref_enabled").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -46,6 +51,10 @@ public class MainActivity extends PreferenceActivity {
                 if (((String) o).length() == 0) {
                     Toast.makeText(getApplicationContext(), R.string.toast_error_mdns_name_length, Toast.LENGTH_LONG).show();
                     return false;
+                }
+                preference.setSummary((String) o);
+                synchronized (NetworkDiscoveryThread.lock) {
+                    NetworkDiscoveryThread.lock.notifyAll();
                 }
                 return true;
             }
