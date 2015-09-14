@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">PoweraMPD</string>
 
+    <string name="mdns_type">_mpd</string>
+    <string name="mdns_description">Powerampd Music Player Daemon</string>
+
     <string name="notification_title_running">PoweraMPD running</string>
     <string name="notification_text_running">Listening on </string>
 
     <string name="toast_error_bind">PoweraMPD: error binding to address</string>
     <string name="toast_error_client">PoweraMPD: error connecting to client</string>
     <string name="toast_error_password_length">Password must be at least one character</string>
+    <string name="toast_error_mdns_name_length">Service name must be at least one character</string>
     <string name="toast_error_cancel">Edit cancelled</string>
 
     <string name="title_settings">Settings</string>
@@ -16,6 +20,9 @@
 
     <string name="pref_enabled">Enabled</string>
     <string name="pref_enabled_desc">Start server when connected to Wi-Fi</string>
+
+    <string name="pref_mdns_name">mDNS Service Name</string>
+    <string name="pref_mdns_name_default">MPD Server</string>
 
     <string name="pref_port">Port</string>
     <string name="pref_port_default">6600</string>

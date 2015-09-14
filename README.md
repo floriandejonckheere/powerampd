@@ -28,6 +28,14 @@ REPEAT_SONG                 repeat: 1
 
 The application and its source code are licensed under the MIT license. A copy of the license is included in the `LICENSE.md` file. All image assets are generated using the [Android Asset Studio](https://romannurik.github.io/AndroidAssetStudio/), and are licensed under the [Creative Commons Attribution 3.0 Unported](http://creativecommons.org/licenses/by/3.0/legalcode) license. The [Poweramp API library](https://github.com/maxmpz/powerampapi/) is needed for the application to function, and is licensed under a custom license available in the library directory. 
 
+## Permissions
+
+The applications needs the following permissions:
+
+- `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE`: Start service when wifi connected
+- `CHANGE_WIFI_MULTICAST_STATE`: Multicast resolution for mDNS Service Discovery
+- `INTERNET`: IP communication
+
 ## Building
 
 - Download the [Poweramp API library](https://github.com/maxmpz/powerampapi/tree/master/poweramp_api_lib) to the appropriate directory 

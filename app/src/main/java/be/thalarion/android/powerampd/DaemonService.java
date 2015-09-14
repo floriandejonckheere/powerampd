@@ -24,6 +24,11 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceInfo;
+
+import be.thalarion.android.powerampd.mdns.NetworkDiscoveryThread;
+
 public class DaemonService extends Service {
 
     private android.support.v4.app.NotificationCompat.Builder notificationBuilder;
@@ -42,6 +47,9 @@ public class DaemonService extends Service {
 
     // UI handler
     private Handler handler;
+
+    // Service Discovery
+    private Thread networkDiscoveryThread;
 
     public void onCreate() {
         this.notificationBuilder = new NotificationCompat.Builder(this);
@@ -108,18 +116,33 @@ public class DaemonService extends Service {
         }
     }
 
-    // Register Poweramp broadcast receivers
     private void register() {
+        /**
+         * Poweramp broadcast receivers
+         */
         registerReceiver(trackBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED));
         registerReceiver(statusBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED));
         registerReceiver(playingModeBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_PLAYING_MODE_CHANGED));
+
+        /**
+         * Network Service Discovery
+         */
+        networkDiscoveryThread = new Thread(new NetworkDiscoveryThread(this));
+        networkDiscoveryThread.start();
     }
 
-    // Unregister Poweramp broadcast receivers
     private void unregister() {
+        /**
+         * Poweramp broadcast receivers
+         */
         unregisterReceiver(trackBroadcastReceiver);
         unregisterReceiver(statusBroadcastReceiver);
         unregisterReceiver(playingModeBroadcastReceiver);
+
+        /**
+         * Network Service Discovery
+         */
+        networkDiscoveryThread.interrupt();
     }
 
     /**

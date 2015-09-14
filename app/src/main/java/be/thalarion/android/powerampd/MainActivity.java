@@ -11,6 +11,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.widget.Toast;
 
 public class MainActivity extends PreferenceActivity {
 
@@ -21,6 +22,7 @@ public class MainActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings);
 
         bindPreferenceSummaryToValue(findPreference("pref_port"));
+        bindPreferenceSummaryToValue(findPreference("pref_mdns_name"));
 
         findPreference("pref_enabled").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -34,6 +36,17 @@ public class MainActivity extends PreferenceActivity {
                     } else {
                         getApplicationContext().stopService(new Intent(getApplicationContext(), DaemonService.class));
                     }
+                return true;
+            }
+        });
+
+        findPreference("pref_mdns_name").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if (((String) o).length() == 0) {
+                    Toast.makeText(getApplicationContext(), R.string.toast_error_mdns_name_length, Toast.LENGTH_LONG).show();
+                    return false;
+                }
                 return true;
             }
         });
