@@ -11,20 +11,26 @@ import android.preference.PreferenceManager;
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        NetworkBroadcastReceiver.toggleService(context);
+    }
+
+    /**
+     * toggleService - start or stop service based on network and preferences
+     * @param context
+     */
+    public static void toggleService(Context context, boolean enabled) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        if (info != null) {
-            if (info.isConnected()) {
-                if (preferences.getBoolean("pref_enabled", true)) {
-                    Intent daemonIntent = new Intent(context, DaemonService.class);
-                    context.startService(daemonIntent);
-                }
-            } else {
-                Intent daemonIntent = new Intent(context, DaemonService.class);
-                context.stopService(daemonIntent);
-            }
-        }
+        Intent intent = new Intent(context, DaemonService.class);
+
+        if (info != null && info.isConnected() && enabled) {
+            context.startService(intent);
+        } else context.stopService(intent);
+    }
+
+    public static void toggleService(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        toggleService(context, preferences.getBoolean("pref_enabled", context.getString(R.string.pref_enabled_default).equals("true")));
     }
 }

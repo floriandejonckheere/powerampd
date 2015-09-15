@@ -32,15 +32,7 @@ public class MainActivity extends PreferenceActivity {
         findPreference("pref_enabled").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
-                ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-                if (info != null)
-                    if (o.toString().equals("true")) {
-                        if (info.isConnected())
-                            getApplicationContext().startService(new Intent(getApplicationContext(), DaemonService.class));
-                    } else {
-                        getApplicationContext().stopService(new Intent(getApplicationContext(), DaemonService.class));
-                    }
+                NetworkBroadcastReceiver.toggleService(getApplicationContext(), o.toString().equals("true"));
                 return true;
             }
         });
@@ -60,15 +52,7 @@ public class MainActivity extends PreferenceActivity {
             }
         });
 
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (info != null)
-            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_enabled", true)) {
-                if (info.isConnected())
-                    getApplicationContext().startService(new Intent(getApplicationContext(), DaemonService.class));
-            } else {
-                getApplicationContext().stopService(new Intent(getApplicationContext(), DaemonService.class));
-            }
+        NetworkBroadcastReceiver.toggleService(getApplicationContext());
     }
 
     @Override

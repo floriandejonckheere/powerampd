@@ -14,24 +14,30 @@ import be.thalarion.android.powerampd.protocol.ProtocolOK;
  */
 public class ClientThread implements Runnable {
 
-    protected State state;
+    private final State state;
+
+    // Application context
+    private final Context context;
 
     public ClientThread(Context context, Socket socket) {
         this.state = new State(context, socket);
+        this.context = context;
     }
 
     @Override
     public void run() {
         try {
             // MPD protocol version
-            state.send(new ProtocolOK("MPD 0.19.0"));
+            state.send(new ProtocolOK(context.getString(R.string.proto_handshake)));
 
             while (!Thread.currentThread().isInterrupted()) {
                 String line = state.readLine();
                 if (line == null || line.length() == 0) {
-                    state.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, "No command given"));
+                    state.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, state.context.getString(R.string.proto_error_no_command)));
                     break;
                 } else try {
+                    // Parse command
+                    Parser parser = new Parser(context);
                     Command command = Parser.parse(line);
                     command.execute(state);
                 } catch (ProtocolException e) {

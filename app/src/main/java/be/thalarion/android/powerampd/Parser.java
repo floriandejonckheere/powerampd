@@ -1,16 +1,14 @@
 package be.thalarion.android.powerampd;
 
-import android.util.Log;
+import android.content.Context;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.util.ArrayList;
-import java.util.IllegalFormatConversionException;
 import java.util.List;
 
 import be.thalarion.android.powerampd.command.CommandLine;
 import be.thalarion.android.powerampd.protocol.Permission;
-import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
@@ -19,6 +17,12 @@ import be.thalarion.android.powerampd.protocol.ProtocolOK;
  * Parser - parse and build commands
  */
 public class Parser {
+
+    private final Context context;
+
+    public Parser(Context context) {
+        this.context = context;
+    }
 
     private static List<String> tokenize(String command) {
         if (command == null || command.length() == 0)
