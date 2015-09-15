@@ -1,106 +1,168 @@
 # Implementation
 
-The current status of all MPD protocol commands
+Deprecated commands are implemented to maintain compatibility.
 
-| Command                 | Status |
-|-------------------------|--------|
-| `add`                     |  |
-| `addid`                   |  |
-| `addtagid`                |  |
-| `channels`                |  |
-| `clear`                   |  |
-| `clearerror`              |  |
-| `cleartagid`              |  |
-| `close`                   | Implemented |
+## Meta
+
+| Command                   | Status |
+|---------------------------|--------|
 | `command_list_begin`      |  |
 | `command_list_end`        |  |
 | `command_list_ok_begin`   |  |
-| `commands`                |  |
-| `config`                  |  |
-| `consume`                 | **Not supported in Poweramp** |
-| `count`                   |  |
-| `crossfade`               |  |
+
+## Status
+
+| Command                   | Status |
+|---------------------------|--------|
+| `clearerror`              |  |
 | `currentsong`             | Partially implemented |
-| `decoders`                |  |
+| `idle`                    |  |
+| `noidle`                  |  |
+| `status`                  | Partially implemented |
+| `stats`                   |  |
+
+## Playback options
+
+| Command                   | Status |
+|---------------------------|--------|
+| `consume`                 | **Not supported in Poweramp** |
+| `crossfade`               |  |
+| `mixrampdb`               |  |
+| `mixrampdelay`            |  |
+| `random`                  |  |
+| `repeat`                  |  |
+| `setvol`                  | Implemented |
+| `single`                  |  |
+| `replay_gain_mode`        |  |
+| `replay_gain_status`      |  |
+| `volume`                  | Deprecated (see `setvol`) |
+
+## Playback
+
+| Command                   | Status |
+|---------------------------|--------|
+| `next`                    | Implemented |
+| `pause`                   | Implemented |
+| `play`                    |  |
+| `playid`                  |  |
+| `previous`                | Implemented |
+| `seek`                    |  |
+| `seekid`                  |  |
+| `seekcur`                 |  |
+| `stop`                    | Implemented |
+
+## Current playlist
+
+| Command                   | Status |
+|---------------------------|--------|
+| `add`                     |  |
+| `addid`                   |  |
+| `clear`                   |  |
 | `delete`                  |  |
 | `deleteid`                |  |
-| `disableoutput`           |  |
-| `enableoutput`            |  |
-| `find`                    |  |
-| `findadd`                 |  |
-| `idle`                    |  |
-| `kill`                    |  |
-| `list`                    |  |
-| `listall`                 |  |
-| `listallinfo`             |  |
-| `listfiles`               |  |
-| `listmounts`              |  |
-| `listneighbors`           |  |
+| `move`                    |  |
+| `moveid`                  |  |
+| `playlist`                |  |
+| `playlistfind`            |  |
+| `playlistid`              |  |
+| `playlistinfo`            |  |
+| `playlistsearch`          |  |
+| `plchanges`               |  |
+| `plchangesposid`          |  |
+| `prio`                    |  |
+| `prioid`                  |  |
+| `rangeid`                 |  |
+| `shuffle`                 |  |
+| `swap`                    |  |
+| `swapid`                  |  |
+| `addtagid`                |  |
+| `cleartagid`              |  |
+
+## Stored playlist
+
+| Command                   | Status |
+|---------------------------|--------|
 | `listplaylist`            |  |
 | `listplaylistinfo`        |  |
 | `listplaylists`           |  |
 | `load`                    |  |
-| `lsinfo`                  |  |
-| `mixrampdb`               |  |
-| `mixrampdelay`            |  |
-| `mount`                   |  |
-| `move`                    |  |
-| `moveid`                  |  |
-| `next`                    | Implemented |
-| `noidle`                  |  |
-| `notcommands`             |  |
-| `outputs`                 |  |
-| `password`                | Implemented |
-| `pause`                   | Implemented |
-| `ping`                    |  |
-| `play`                    |  |
-| `playid`                  |  |
-| `playlist`                |  |
 | `playlistadd`             |  |
 | `playlistclear`           |  |
 | `playlistdelete`          |  |
-| `playlistfind`            |  |
-| `playlistid`              |  |
-| `playlistinfo`            |  |
 | `playlistmove`            |  |
-| `playlistsearch`          |  |
-| `plchanges`               |  |
-| `plchangesposid`          |  |
-| `previous`                | Implemented |
-| `prio`                    |  |
-| `prioid`                  |  |
-| `random`                  |  |
-| `rangeid`                 |  |
-| `readcomments`            |  |
-| `readmessages`            |  |
 | `rename`                  |  |
-| `repeat`                  |  |
-| `replay_gain_mode`        |  |
-| `replay_gain_status`      |  |
-| `rescan`                  |  |
 | `rm`                      |  |
 | `save`                    |  |
+
+## Database
+
+| Command                   | Status |
+|---------------------------|--------|
+| `count`                   |  |
+| `find`                    |  |
+| `findadd`                 |  |
+| `list`                    |  |
+| `listall`                 |  |
+| `listallinfo`             |  |
+| `listfiles`               |  |
+| `lsinfo`                  |  |
+| `readcomments`            |  |
 | `search`                  |  |
 | `searchadd`               |  |
 | `searchaddpl`             |  |
-| `seek`                    |  |
-| `seekcur`                 |  |
-| `seekid`                  |  |
-| `sendmessage`             |  |
-| `setvol`                  | Implemented |
-| `shuffle`                 |  |
-| `single`                  |  |
-| `stats`                   |  |
-| `status`                  | Partially implemented |
-| `sticker`                 |  |
-| `stop`                    | Implemented |
-| `subscribe`               |  |
-| `swap`                    |  |
-| `swapid`                  |  |
-| `tagtypes`                |  |
-| `toggleoutput`            |  |
-| `unmount`                 |  |
-| `unsubscribe`             |  |
 | `update`                  |  |
+| `rescan`                  |  |
+
+## Mounts
+
+| Command                   | Status |
+|---------------------------|--------|
+| `mount`                   |  |
+| `unmount`                 |  |
+| `listmounts`              |  |
+| `listneighbors`           |  |
+
+## Stickers
+
+| Command                   | Status |
+|---------------------------|--------|
+| `sticker`                 |  |
+
+## Connection
+
+| Command                   | Status |
+|---------------------------|--------|
+| `close`                   | Implemented |
+| `kill`                    |  |
+| `password`                | Implemented |
+| `ping`                    |  |
+
+## Audio devices
+
+| Command                   | Status |
+|---------------------------|--------|
+| `disableoutput`           |  |
+| `enableoutput`            |  |
+| `toggleoutput`            |  |
+| `outputs`                 |  |
+
+## Reflection
+
+| Command                   | Status |
+|---------------------------|--------|
+| `config`                  |  |
+| `commands`                |  |
+| `notcommands`             |  |
+| `tagtypes`                |  |
 | `urlhandlers`             |  |
-| `volume`                  | Deprecated (see `setvol`) |
+| `decoders`                |  |
+
+## Client to client
+
+| Command                   | Status |
+|---------------------------|--------|
+| `subscribe`               |  |
+| `unsubscribe`             |  |
+| `channels`                |  |
+| `readmessages`            |  |
+| `sendmessage`             |  |
