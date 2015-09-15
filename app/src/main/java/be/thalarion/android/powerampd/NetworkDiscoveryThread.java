@@ -4,15 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
-
-import be.thalarion.android.powerampd.R;
 
 public class NetworkDiscoveryThread implements Runnable {
 
@@ -55,7 +52,7 @@ public class NetworkDiscoveryThread implements Runnable {
                     register();
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                // InterruptedException thrown when thread stopped
             } finally {
                 // Unregister ServiceInfo
                 unregister();

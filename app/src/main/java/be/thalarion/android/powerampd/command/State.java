@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.command;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 import be.thalarion.android.powerampd.PasswordEntry;
@@ -27,7 +26,7 @@ import be.thalarion.android.powerampd.protocol.ProtocolException;
  */
 public class State {
 
-    protected Context context;
+    public Context context;
     private Socket socket;
 
     private BufferedReader reader;
@@ -63,8 +62,9 @@ public class State {
             writer.write(protocol.toString());
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
-            close();
+            // IOException thrown on command 'close'
+//            e.printStackTrace();
+//            close();
         }
     }
 
@@ -74,7 +74,7 @@ public class State {
             if (reader != null) reader.close();
             if (writer != null) writer.close();
             Thread.currentThread().interrupt();
-            socket.close();
+            if (!socket.isClosed()) socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

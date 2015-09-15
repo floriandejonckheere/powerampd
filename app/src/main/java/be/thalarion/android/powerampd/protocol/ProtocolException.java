@@ -45,4 +45,14 @@ public class ProtocolException extends Exception implements Protocol {
     public String toString() {
         return String.format("ACK [%d@%d] {%s} %s\n", this.error, this.line, this.command, this.message);
     }
+
+    public static class EmptyException extends ProtocolException {
+
+        public EmptyException() { super(0, null); }
+
+        @Override
+        public String toString() {
+            return "";
+        }
+    }
 }
