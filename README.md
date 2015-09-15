@@ -8,6 +8,7 @@ There are a few differences in protocol response with the official MPD server. T
 
 - Error handling: the command resulting error is always printed
 - Encoding: special characters are handled better
+- Consume mode is not supported in Poweramp
 
 Poweramp repeat mode mapping is as follows:
 

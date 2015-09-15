@@ -17,7 +17,7 @@ The current status of all MPD protocol commands
 | `command_list_ok_begin`   |  |
 | `commands`                |  |
 | `config`                  |  |
-| `consume`                 |  |
+| `consume`                 | **Not supported in Poweramp** |
 | `count`                   |  |
 | `crossfade`               |  |
 | `currentsong`             | Partially implemented |

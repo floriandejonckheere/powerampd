@@ -10,6 +10,7 @@ import java.util.List;
 
 import be.thalarion.android.powerampd.command.CommandLine;
 import be.thalarion.android.powerampd.protocol.Permission;
+import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
@@ -47,6 +48,7 @@ public class Parser {
 
     private enum COMMAND {
         CLOSE,
+        CONSUME,
         CURRENTSONG,
         NEXT,
         PASSWORD,
@@ -85,6 +87,16 @@ public class Parser {
                             state.close();
                         }
                     };
+                case CONSUME:
+                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 1, 1) {
+                        @Override
+                        public void executeCommand(State state) throws ProtocolException {
+                            throw new ProtocolException(
+                                    ProtocolException.ACK_ERROR_SYSTEM,
+                                    cmdline.get(0),
+                                    state.context.getString(R.string.proto_error_consume));
+                        }
+                    };
                 case CURRENTSONG:
                     return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
@@ -108,7 +120,7 @@ public class Parser {
                         public void executeCommand(State state) throws ProtocolException {
                             if (!state.authenticate(cmdline.get(1)))
                                 throw new ProtocolException(ProtocolException.ACK_ERROR_PASSWORD, cmdline.get(0),
-                                        "incorrect password");
+                                        state.context.getString(R.string.proto_error_password));
 
                             state.send(new ProtocolOK());
                         }
@@ -123,7 +135,7 @@ public class Parser {
                                 } else if (cmdline.get(1).equals("1")) {
                                     state.command(PowerampAPI.Commands.PAUSE);
                                 } else throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                        String.format("Boolean (0/1) expected: %s", cmdline.get(1)));
+                                        String.format(state.context.getString(R.string.proto_error_pause_arg), cmdline.get(1)));
                             } else state.command(PowerampAPI.Commands.TOGGLE_PLAY_PAUSE);
                             state.send(new ProtocolOK());
                         }
@@ -145,16 +157,16 @@ public class Parser {
                                 int volume = Integer.parseInt(cmdline.get(1));
                                 if (volume > 100)
                                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                            "Invalid volume value");
+                                            state.context.getString(R.string.proto_error_volume_invalid));
 
                                 if (volume < 0)
                                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                            String.format("Integer expected: %s", cmdline.get(1)));
+                                            String.format(state.context.getString(R.string.proto_error_volume_integer), cmdline.get(1)));
                                 SystemState.setVolume(state.context, volume);
                                 state.send(new ProtocolOK());
                             } catch (NumberFormatException e) {
                                 throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                        String.format("Integer expected: %s", cmdline.get(1)));
+                                        String.format(state.context.getString(R.string.proto_error_volume_integer), cmdline.get(1)));
                             }
                         }
                     };
@@ -166,6 +178,7 @@ public class Parser {
                             state.send(new ProtocolMessage(String.format("repeat: %d", SystemState.getRepeat())));
                             state.send(new ProtocolMessage(String.format("random: %d", SystemState.getShuffle())));
                             state.send(new ProtocolMessage(String.format("single: %d", SystemState.getSingle())));
+                            // Consume mode is not supported in Poweramp
                             state.send(new ProtocolMessage(String.format("consume: %d", 0)));
                             state.send(new ProtocolMessage(String.format("playlist: %d", 0)));
                             state.send(new ProtocolMessage(String.format("playlistlength: %d", 0)));

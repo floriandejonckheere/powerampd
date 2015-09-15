@@ -49,4 +49,10 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
     <string name="action_add_password">Add password</string>
+
+    <string name="proto_error_consume">Consume mode is not supported</string>
+    <string name="proto_error_password">incorrect password</string>
+    <string name="proto_error_pause_arg">Boolean (0/1) expected: %s</string>
+    <string name="proto_error_volume_invalid">Invalid volume value</string>
+    <string name="proto_error_volume_integer">Integer expected: %s</string>
 </resources>
