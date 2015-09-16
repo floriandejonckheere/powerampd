@@ -1,10 +1,7 @@
 package be.thalarion.android.powerampd;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -12,6 +9,9 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.widget.Toast;
+
+import be.thalarion.android.powerampd.service.DaemonService;
+import be.thalarion.android.powerampd.service.NetworkBroadcastReceiver;
 
 public class MainActivity extends PreferenceActivity {
 
@@ -29,6 +29,11 @@ public class MainActivity extends PreferenceActivity {
                         "pref_mdns_name",
                         getString(R.string.pref_mdns_name_default)));
 
+        findPreference("pref_mdns_hostname").setSummary(
+                PreferenceManager.getDefaultSharedPreferences(this).getString(
+                        "pref_mdns_hostname",
+                        getString(R.string.pref_mdns_hostname_default)));
+
         findPreference("pref_enabled").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
@@ -37,7 +42,7 @@ public class MainActivity extends PreferenceActivity {
             }
         });
 
-        findPreference("pref_mdns_name").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        Preference.OnPreferenceChangeListener mDNSListener = new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 if (((String) o).length() == 0) {
@@ -45,12 +50,15 @@ public class MainActivity extends PreferenceActivity {
                     return false;
                 }
                 preference.setSummary((String) o);
-                synchronized (NetworkDiscoveryThread.lock) {
-                    NetworkDiscoveryThread.lock.notifyAll();
-                }
+
+                if (DaemonService.instance != null)
+                    DaemonService.instance.startZeroConfThread();
+
                 return true;
             }
-        });
+        };
+        findPreference("pref_mdns_name").setOnPreferenceChangeListener(mDNSListener);
+        findPreference("pref_mdns_hostname").setOnPreferenceChangeListener(mDNSListener);
 
         NetworkBroadcastReceiver.toggleService(getApplicationContext());
     }

@@ -1,11 +1,13 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.service;
 
 import android.content.Context;
 
 import java.io.IOException;
 import java.net.Socket;
 
+import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.command.Command;
+import be.thalarion.android.powerampd.command.Parser;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
 
@@ -33,7 +35,7 @@ public class ClientThread implements Runnable {
             while (!Thread.currentThread().isInterrupted()) {
                 String line = state.readLine();
                 if (line == null || line.length() == 0) {
-                    state.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, state.context.getString(R.string.proto_error_no_command)));
+                    state.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, state.getContext().getString(R.string.proto_error_no_command)));
                     break;
                 } else try {
                     // Parse command

@@ -6,7 +6,6 @@
         android:key="pref_password"
         android:title="@string/pref_password"
         android:defaultValue="@string/pref_password_default"
-        android:selectAllOnFocus="true"
         android:singleLine="true"
         android:maxLines="1" />
 

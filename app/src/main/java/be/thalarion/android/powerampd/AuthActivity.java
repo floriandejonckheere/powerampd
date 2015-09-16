@@ -9,7 +9,6 @@ import android.preference.PreferenceCategory;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AuthActivity extends PreferenceActivity

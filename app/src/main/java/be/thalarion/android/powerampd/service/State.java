@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.service;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 import be.thalarion.android.powerampd.PasswordEntry;
@@ -27,7 +26,7 @@ import be.thalarion.android.powerampd.protocol.ProtocolException;
  */
 public class State {
 
-    protected Context context;
+    private Context context;
     private Socket socket;
 
     private BufferedReader reader;
@@ -130,5 +129,9 @@ public class State {
 
     public SharedPreferences getPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

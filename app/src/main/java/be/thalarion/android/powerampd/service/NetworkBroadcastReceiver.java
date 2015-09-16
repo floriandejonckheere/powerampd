@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+
+import be.thalarion.android.powerampd.R;
 
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
     @Override

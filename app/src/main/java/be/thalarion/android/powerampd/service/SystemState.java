@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.service;
 
 import android.content.Context;
 import android.content.Intent;

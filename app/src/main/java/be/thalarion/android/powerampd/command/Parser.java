@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.command;
 
 import android.content.Context;
 
@@ -7,11 +7,13 @@ import com.maxmpz.poweramp.player.PowerampAPI;
 import java.util.ArrayList;
 import java.util.List;
 
-import be.thalarion.android.powerampd.command.CommandLine;
+import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
+import be.thalarion.android.powerampd.service.State;
+import be.thalarion.android.powerampd.service.SystemState;
 
 /**
  * Parser - parse and build commands
@@ -98,7 +100,7 @@ public class Parser {
                             throw new ProtocolException(
                                     ProtocolException.ACK_ERROR_SYSTEM,
                                     cmdline.get(0),
-                                    state.context.getString(R.string.proto_error_consume));
+                                    state.getContext().getString(R.string.proto_error_consume));
                         }
                     };
                 case CURRENTSONG:
@@ -124,7 +126,7 @@ public class Parser {
                         public void executeCommand(State state) throws ProtocolException {
                             if (!state.authenticate(cmdline.get(1)))
                                 throw new ProtocolException(ProtocolException.ACK_ERROR_PASSWORD, cmdline.get(0),
-                                        state.context.getString(R.string.proto_error_password));
+                                        state.getContext().getString(R.string.proto_error_password));
 
                             state.send(new ProtocolOK());
                         }
@@ -139,7 +141,7 @@ public class Parser {
                                 } else if (cmdline.get(1).equals("1")) {
                                     state.command(PowerampAPI.Commands.PAUSE);
                                 } else throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                        String.format(state.context.getString(R.string.proto_error_pause_arg), cmdline.get(1)));
+                                        String.format(state.getContext().getString(R.string.proto_error_pause_arg), cmdline.get(1)));
                             } else state.command(PowerampAPI.Commands.TOGGLE_PLAY_PAUSE);
                             state.send(new ProtocolOK());
                         }
@@ -161,16 +163,16 @@ public class Parser {
                                 int volume = Integer.parseInt(cmdline.get(1));
                                 if (volume > 100)
                                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                            state.context.getString(R.string.proto_error_volume_invalid));
+                                            state.getContext().getString(R.string.proto_error_volume_invalid));
 
                                 if (volume < 0)
                                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                            String.format(state.context.getString(R.string.proto_error_volume_integer), cmdline.get(1)));
-                                SystemState.setVolume(state.context, volume);
+                                            String.format(state.getContext().getString(R.string.proto_error_volume_integer), cmdline.get(1)));
+                                SystemState.setVolume(state.getContext(), volume);
                                 state.send(new ProtocolOK());
                             } catch (NumberFormatException e) {
                                 throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                        String.format(state.context.getString(R.string.proto_error_volume_integer), cmdline.get(1)));
+                                        String.format(state.getContext().getString(R.string.proto_error_volume_integer), cmdline.get(1)));
                             }
                         }
                     };
@@ -178,7 +180,7 @@ public class Parser {
                     return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
-                            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.context)))));
+                            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.getContext())))));
                             state.send(new ProtocolMessage(String.format("repeat: %d", SystemState.getRepeat())));
                             state.send(new ProtocolMessage(String.format("random: %d", SystemState.getShuffle())));
                             state.send(new ProtocolMessage(String.format("single: %d", SystemState.getSingle())));

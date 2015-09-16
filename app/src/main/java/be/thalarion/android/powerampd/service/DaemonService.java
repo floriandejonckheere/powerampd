@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -24,11 +24,15 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.thalarion.android.powerampd.MainActivity;
+import be.thalarion.android.powerampd.R;
+
 public class DaemonService extends Service {
 
-    private android.support.v4.app.NotificationCompat.Builder notificationBuilder;
+    public static DaemonService instance;
+
     private NotificationManager notificationManager;
-    private static final int notificationID = R.string.notification_text_running;
+    private static final int notificationID = 1;
 
     // Broadcast receivers
     private BroadcastReceiver trackBroadcastReceiver;
@@ -44,13 +48,15 @@ public class DaemonService extends Service {
     private Handler handler;
 
     // Service Discovery
-    private Thread networkDiscoveryThread;
+    private Thread zeroConfThread;
 
     public void onCreate() {
-        this.notificationBuilder = new NotificationCompat.Builder(this);
+        instance = this;
+
         this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         this.handler = new Handler();
-        this.port = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("pref_port", getString(R.string.pref_port_default)));
+        this.port = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("pref_port",
+                getString(R.string.pref_port_default)));
 
         this.trackBroadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -73,9 +79,7 @@ public class DaemonService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+    public IBinder onBind(Intent intent) { throw new UnsupportedOperationException("Not yet implemented"); }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -84,10 +88,16 @@ public class DaemonService extends Service {
             serverThread = new Thread(new ServerThread());
             serverThread.start();
 
-            WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
-            String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
-            handler.post(new NotificationThread(getString(R.string.notification_title_running),
-                    String.format("%s %s:%d\n", getString(R.string.notification_text_running), ip, + port)));
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    WifiManager wm = (WifiManager) getSystemService(WIFI_SERVICE);
+                    String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+
+                    updateOrSetNotification(getApplicationContext(), getString(R.string.notification_title_running),
+                            String.format(getString(R.string.notification_text_running_ip), ip, port));
+                }
+            });
         }
 
         return Service.START_STICKY;
@@ -106,7 +116,10 @@ public class DaemonService extends Service {
                 e.printStackTrace();
             }
             serverThread = null;
-            handler.post(new NotificationThread(null, null));
+            handler.post(new Runnable() {
+                @Override
+                public void run() { cancelNotification(getApplicationContext()); }
+            });
             unregister();
         }
     }
@@ -120,8 +133,7 @@ public class DaemonService extends Service {
         registerReceiver(statusBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED));
         registerReceiver(playingModeBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_PLAYING_MODE_CHANGED));
 
-        networkDiscoveryThread = new Thread(new NetworkDiscoveryThread(getApplicationContext()));
-        networkDiscoveryThread.start();
+        startZeroConfThread();
     }
 
     private void unregister() {
@@ -133,7 +145,7 @@ public class DaemonService extends Service {
         unregisterReceiver(statusBroadcastReceiver);
         unregisterReceiver(playingModeBroadcastReceiver);
 
-        networkDiscoveryThread.interrupt();
+        zeroConfThread.interrupt();
     }
 
     /**
@@ -170,37 +182,41 @@ public class DaemonService extends Service {
         }
     }
 
-    /**
-     * NotificationThread - persistent notification management
-     */
-    class NotificationThread implements Runnable {
+    public static void updateOrSetNotification(Context context, String title, String text) {
+        Intent resultIntent = new Intent(context, MainActivity.class);
+        resultIntent.setAction(Intent.ACTION_MAIN);
+        resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        PendingIntent intent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        private String title;
-        private String text;
+        android.support.v4.app.NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setContentTitle(title)
+                .setContentText(text)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentIntent(intent)
+                .setOngoing(true);
 
-        public NotificationThread(String title, String text) {
-            this.title = title;
-            this.text = text;
-        }
+        ((NotificationManager) context.getSystemService(NOTIFICATION_SERVICE)).notify(notificationID, builder.build());
+    }
 
-        @Override
-        public void run() {
-            if (this.title == null && this.text == null) {
-                notificationManager.cancel(notificationID);
-            } else {
-                Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-                resultIntent.setAction(Intent.ACTION_MAIN);
-                resultIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-                PendingIntent intent = PendingIntent.getActivity(getApplicationContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                notificationBuilder
-                        .setContentTitle(this.title)
-                        .setContentText(this.text)
-                        .setSmallIcon(R.drawable.ic_notification)
-                        .setContentIntent(intent)
-                        .setOngoing(true);
+    public static void cancelNotification(Context context) {
+        ((NotificationManager) context.getSystemService(NOTIFICATION_SERVICE)).cancel(notificationID);
+    }
 
-                notificationManager.notify(notificationID, notificationBuilder.build());
+    public void startZeroConfThread() {
+        // New thread to start a new thread
+        // Because join() blocks
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (zeroConfThread != null) {
+                    zeroConfThread.interrupt();
+                    try {
+                        zeroConfThread.join();
+                    } catch (InterruptedException ignored) {}
+                }
+                zeroConfThread = new Thread(new ZeroConfThread(getApplicationContext(), handler));
+                zeroConfThread.start();
             }
-        }
+        }).start();
     }
 }

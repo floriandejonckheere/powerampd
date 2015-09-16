@@ -2,9 +2,9 @@ package be.thalarion.android.powerampd.command;
 
 import java.util.List;
 
-import be.thalarion.android.powerampd.State;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
+import be.thalarion.android.powerampd.service.State;
 
 public abstract class CommandLine implements Command {
 

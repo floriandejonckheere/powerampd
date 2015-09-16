@@ -15,12 +15,12 @@
         tools:replace="android:icon"
         android:name="com.orm.SugarApp">
         <service
-            android:name=".DaemonService"
+            android:name=".service.DaemonService"
             android:enabled="true"
             android:exported="true" >
         </service>
 
-        <receiver android:name=".NetworkBroadcastReceiver" >
+        <receiver android:name=".service.NetworkBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
