@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.net.Socket;
 
 import be.thalarion.android.powerampd.R;
-import be.thalarion.android.powerampd.command.Command;
+import be.thalarion.android.powerampd.command.Executable;
 import be.thalarion.android.powerampd.command.Parser;
+import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
 
@@ -17,8 +18,6 @@ import be.thalarion.android.powerampd.protocol.ProtocolOK;
 public class ClientThread implements Runnable {
 
     private final State state;
-
-    // Application context
     private final Context context;
 
     public ClientThread(Context context, Socket socket) {
@@ -32,16 +31,18 @@ public class ClientThread implements Runnable {
             // MPD protocol version
             state.send(new ProtocolOK(context.getString(R.string.proto_handshake)));
 
+            Parser parser = new Parser(context);
+
             while (!Thread.currentThread().isInterrupted()) {
                 String line = state.readLine();
+                Executable executable = null;
                 if (line == null || line.length() == 0) {
-                    state.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, state.getContext().getString(R.string.proto_error_no_command)));
+                    state.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, state.getContext().getString(R.string.proto_error_command_none)));
                     break;
                 } else try {
                     // Parse command
-                    Parser parser = new Parser(context);
-                    Command command = Parser.parse(line);
-                    command.execute(state);
+                    executable = parser.parse(line);
+                    executable.execute(state);
                 } catch (ProtocolException e) {
                     state.send(e);
                 }

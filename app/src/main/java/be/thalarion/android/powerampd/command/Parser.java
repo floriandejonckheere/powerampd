@@ -1,19 +1,18 @@
 package be.thalarion.android.powerampd.command;
 
 import android.content.Context;
-
-import com.maxmpz.poweramp.player.PowerampAPI;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import be.thalarion.android.powerampd.R;
-import be.thalarion.android.powerampd.protocol.Permission;
+import be.thalarion.android.powerampd.command.commands.Connection;
+import be.thalarion.android.powerampd.command.commands.Meta;
+import be.thalarion.android.powerampd.command.commands.PlaybackControl;
+import be.thalarion.android.powerampd.command.commands.PlaybackOptions;
+import be.thalarion.android.powerampd.command.commands.PlaybackStatus;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
-import be.thalarion.android.powerampd.protocol.ProtocolMessage;
-import be.thalarion.android.powerampd.protocol.ProtocolOK;
-import be.thalarion.android.powerampd.service.State;
-import be.thalarion.android.powerampd.service.SystemState;
 
 /**
  * Parser - parse and build commands
@@ -21,9 +20,105 @@ import be.thalarion.android.powerampd.service.SystemState;
 public class Parser {
 
     private final Context context;
+    private CommandList commandList;
+
+    private enum COMMAND {
+        CLOSE,
+        COMMAND_LIST_BEGIN,
+        COMMAND_LIST_END,
+        COMMAND_LIST_OK_BEGIN,
+        CONSUME,
+        CURRENTSONG,
+        NEXT,
+        PASSWORD,
+        PAUSE,
+        PING,
+        PREVIOUS,
+        SETVOL,
+        STATUS,
+        VOLUME,
+
+        DEBUG
+    }
 
     public Parser(Context context) {
         this.context = context;
+    }
+
+    public Executable parse(String commandline)
+            throws ProtocolException {
+        List<String> cmdline = tokenize(commandline);
+
+        Command command;
+
+        try {
+            switch (COMMAND.valueOf(cmdline.get(0).toUpperCase())) {
+                // TODO: add error to queue when list already started
+                case COMMAND_LIST_BEGIN:
+                    commandList = new CommandList(CommandList.MODE.LIST);
+                    return new Connection.Null();
+                case COMMAND_LIST_OK_BEGIN:
+                    commandList = new CommandList(CommandList.MODE.LIST_OK);
+                    return new Connection.Null();
+                case COMMAND_LIST_END:
+                    // TODO: error on no list
+                    Executable list = commandList;
+                    commandList = null;
+                    return list;
+                default:
+                    command = toCommand(cmdline);
+            }
+        } catch (ProtocolException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            // Unknown command
+            command = new Meta.DelayedException(
+                    new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0),
+                            String.format(context.getString(R.string.proto_error_command_unknown), cmdline.get(0))));
+        }
+
+        if (commandList == null) {
+            Log.i("powerampd-parser", "single command");
+            CommandList singleList = new CommandList(CommandList.MODE.LIST);
+            singleList.add(command);
+            return singleList;
+        } else {
+            Log.i("powerampd-parser", "adding to list");
+            commandList.add(command);
+            return new Connection.Null();
+        }
+    }
+
+    public Command toCommand(List<String> cmdline)
+            throws ProtocolException {
+        switch (COMMAND.valueOf(cmdline.get(0).toUpperCase())) {
+            case CLOSE:
+                return new Connection.Close();
+            case CONSUME:
+                return new PlaybackOptions.Consume();
+            case CURRENTSONG:
+                return new PlaybackStatus.CurrentSong(cmdline);
+            case DEBUG:
+                return new Meta.Debug();
+            case NEXT:
+                return new PlaybackControl.Next(cmdline);
+            case PASSWORD:
+                return new Connection.Password(cmdline);
+            case PAUSE:
+                return new PlaybackControl.Pause(cmdline);
+            case PING:
+                return new Connection.Ping(cmdline);
+            case PREVIOUS:
+                return new PlaybackControl.Previous(cmdline);
+            case SETVOL:
+            case VOLUME:
+                return new PlaybackOptions.Volume(cmdline);
+            case STATUS:
+                return new PlaybackStatus.Status(cmdline);
+            default:
+                throw new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0),
+                        context.getString(R.string.proto_error_command_implemented));
+        }
     }
 
     private static List<String> tokenize(String command) {
@@ -49,164 +144,5 @@ public class Parser {
         }
 
         return list;
-    }
-
-
-    private enum COMMAND {
-        CLOSE,
-        CONSUME,
-        CURRENTSONG,
-        NEXT,
-        PASSWORD,
-        PAUSE,
-        PREVIOUS,
-        SETVOL,
-        STATUS,
-        VOLUME,
-
-        DEBUG
-    }
-
-    public static CommandLine parse(String command)
-            throws ProtocolException {
-        List<String> cmdline = Parser.tokenize(command);
-        try {
-            switch (COMMAND.valueOf(cmdline.get(0).toUpperCase())) {
-                case DEBUG:
-                    return new CommandLine(cmdline, Permission.PERMISSION_NONE, 0, 0) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            state.send(new ProtocolMessage(String.format("authenticated: %s", state.isAuthenticated())));
-                            state.send(new ProtocolMessage(String.format("auth_enabled: %s", state.getPreferences().getBoolean("pref_auth_enabled", true))));
-                            state.send(new ProtocolMessage(String.format("can_none: %s", state.authorize(Permission.PERMISSION_NONE))));
-                            state.send(new ProtocolMessage(String.format("can_read: %s", state.authorize(Permission.PERMISSION_READ))));
-                            state.send(new ProtocolMessage(String.format("can_add: %s", state.authorize(Permission.PERMISSION_ADD))));
-                            state.send(new ProtocolMessage(String.format("can_control: %s", state.authorize(Permission.PERMISSION_CONTROL))));
-                            state.send(new ProtocolMessage(String.format("can_admin: %s", state.authorize(Permission.PERMISSION_ADMIN))));
-                            state.send(new ProtocolOK());
-                        }
-                    };
-                case CLOSE:
-                    return new CommandLine(cmdline, Permission.PERMISSION_NONE, 0, 0) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            state.close();
-                        }
-                    };
-                case CONSUME:
-                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 1, 1) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            throw new ProtocolException(
-                                    ProtocolException.ACK_ERROR_SYSTEM,
-                                    cmdline.get(0),
-                                    state.getContext().getString(R.string.proto_error_consume));
-                        }
-                    };
-                case CURRENTSONG:
-                    return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            state.send(new ProtocolMessage(String.format("Title: %s",
-                                    SystemState.getTrack().getString(PowerampAPI.Track.TITLE))));
-                            state.send(new ProtocolOK());
-                        }
-                    };
-                case NEXT:
-                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 0) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            state.command(PowerampAPI.Commands.NEXT);
-                            state.send(new ProtocolOK());
-                        }
-                    };
-                case PASSWORD:
-                    return new CommandLine(cmdline, Permission.PERMISSION_NONE, 1, 1) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            if (!state.authenticate(cmdline.get(1)))
-                                throw new ProtocolException(ProtocolException.ACK_ERROR_PASSWORD, cmdline.get(0),
-                                        state.getContext().getString(R.string.proto_error_password));
-
-                            state.send(new ProtocolOK());
-                        }
-                    };
-                case PAUSE:
-                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 1) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            if (cmdline.size() > 1) {
-                                if (cmdline.get(1).equals("0")) {
-                                    state.command(PowerampAPI.Commands.RESUME);
-                                } else if (cmdline.get(1).equals("1")) {
-                                    state.command(PowerampAPI.Commands.PAUSE);
-                                } else throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                        String.format(state.getContext().getString(R.string.proto_error_pause_arg), cmdline.get(1)));
-                            } else state.command(PowerampAPI.Commands.TOGGLE_PLAY_PAUSE);
-                            state.send(new ProtocolOK());
-                        }
-                    };
-                case PREVIOUS:
-                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 0, 0) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            state.command(PowerampAPI.Commands.PREVIOUS);
-                            state.send(new ProtocolOK());
-                        }
-                    };
-                case SETVOL:
-                case VOLUME:
-                    return new CommandLine(cmdline, Permission.PERMISSION_CONTROL, 1, 1) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            try {
-                                int volume = Integer.parseInt(cmdline.get(1));
-                                if (volume > 100)
-                                    throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                            state.getContext().getString(R.string.proto_error_volume_invalid));
-
-                                if (volume < 0)
-                                    throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                            String.format(state.getContext().getString(R.string.proto_error_volume_integer), cmdline.get(1)));
-                                SystemState.setVolume(state.getContext(), volume);
-                                state.send(new ProtocolOK());
-                            } catch (NumberFormatException e) {
-                                throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                                        String.format(state.getContext().getString(R.string.proto_error_volume_integer), cmdline.get(1)));
-                            }
-                        }
-                    };
-                case STATUS:
-                    return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
-                        @Override
-                        public void executeCommand(State state) throws ProtocolException {
-                            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.getContext())))));
-                            state.send(new ProtocolMessage(String.format("repeat: %d", SystemState.getRepeat())));
-                            state.send(new ProtocolMessage(String.format("random: %d", SystemState.getShuffle())));
-                            state.send(new ProtocolMessage(String.format("single: %d", SystemState.getSingle())));
-                            // Consume mode is not supported in Poweramp
-                            state.send(new ProtocolMessage(String.format("consume: %d", 0)));
-                            state.send(new ProtocolMessage(String.format("playlist: %d", 0)));
-                            state.send(new ProtocolMessage(String.format("playlistlength: %d", 0)));
-                            state.send(new ProtocolMessage(String.format("mixrampdb: %d", 0)));
-                            state.send(new ProtocolMessage(String.format("state: %s", "stop")));
-                            state.send(new ProtocolMessage(String.format("song: %s", 0)));
-                            state.send(new ProtocolMessage(String.format("songid: %s", 0)));
-                            state.send(new ProtocolMessage(String.format("nextsong: %s", 0)));
-                            state.send(new ProtocolMessage(String.format("nextsongid: %s", 0)));
-                            state.send(new ProtocolOK());
-                        }
-                    };
-                default:
-                    throw new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0), "command not implemented");
-            }
-        } catch (ProtocolException e) {
-            // Malformed command
-            throw e;
-        } catch (IllegalArgumentException e) {
-            // Unknown command
-            throw new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0),
-                    String.format("unknown command \"%s\"", cmdline.get(0)));
-        }
     }
 }

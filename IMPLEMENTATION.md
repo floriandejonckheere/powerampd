@@ -6,9 +6,9 @@ Deprecated commands are implemented to maintain compatibility.
 
 | Command                   | Status |
 |---------------------------|--------|
-| `command_list_begin`      |  |
-| `command_list_end`        |  |
-| `command_list_ok_begin`   |  |
+| `command_list_begin`      | Implemented |
+| `command_list_end`        | Implemented |
+| `command_list_ok_begin`   | Implemented |
 
 ## Status
 
@@ -37,7 +37,7 @@ Deprecated commands are implemented to maintain compatibility.
 | `replay_gain_status`      |  |
 | `volume`                  | Deprecated (see `setvol`) |
 
-## Playback
+## Playback control
 
 | Command                   | Status |
 |---------------------------|--------|
@@ -135,7 +135,7 @@ Deprecated commands are implemented to maintain compatibility.
 | `close`                   | Implemented |
 | `kill`                    |  |
 | `password`                | Implemented |
-| `ping`                    |  |
+| `ping`                    | Implemented |
 
 ## Audio devices
 

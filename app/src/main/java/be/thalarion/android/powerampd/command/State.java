@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd.service;
+package be.thalarion.android.powerampd.command;
 
 import android.content.Context;
 import android.content.Intent;
@@ -62,8 +62,9 @@ public class State {
             writer.write(protocol.toString());
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
-            close();
+            // IOException thrown on command 'close'
+//            e.printStackTrace();
+//            close();
         }
     }
 
@@ -73,7 +74,7 @@ public class State {
             if (reader != null) reader.close();
             if (writer != null) writer.close();
             Thread.currentThread().interrupt();
-            socket.close();
+            if (!socket.isClosed()) socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
