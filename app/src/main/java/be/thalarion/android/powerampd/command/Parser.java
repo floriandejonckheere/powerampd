@@ -1,18 +1,16 @@
-package be.thalarion.android.powerampd;
-
-import android.util.Log;
+package be.thalarion.android.powerampd.command;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.util.ArrayList;
-import java.util.IllegalFormatConversionException;
 import java.util.List;
 
-import be.thalarion.android.powerampd.command.CommandLine;
+import be.thalarion.android.powerampd.service.SystemState;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
+import be.thalarion.android.powerampd.service.State;
 
 /**
  * Parser - parse and build commands
@@ -150,7 +148,7 @@ public class Parser {
                                 if (volume < 0)
                                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                                             String.format("Integer expected: %s", cmdline.get(1)));
-                                SystemState.setVolume(state.context, volume);
+                                SystemState.setVolume(state.getContext(), volume);
                                 state.send(new ProtocolOK());
                             } catch (NumberFormatException e) {
                                 throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
@@ -162,7 +160,7 @@ public class Parser {
                     return new CommandLine(cmdline, Permission.PERMISSION_READ, 0, 0) {
                         @Override
                         public void executeCommand(State state) throws ProtocolException {
-                            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.context)))));
+                            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.getContext())))));
                             state.send(new ProtocolMessage(String.format("repeat: %d", SystemState.getRepeat())));
                             state.send(new ProtocolMessage(String.format("random: %d", SystemState.getShuffle())));
                             state.send(new ProtocolMessage(String.format("single: %d", SystemState.getSingle())));

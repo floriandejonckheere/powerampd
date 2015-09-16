@@ -9,6 +9,7 @@
             android:key="pref_enabled"
             android:title="@string/pref_enabled"
             android:summary="@string/pref_enabled_desc"
+            android:checked="true"
             android:defaultValue="false" />
 
         <EditTextPreference

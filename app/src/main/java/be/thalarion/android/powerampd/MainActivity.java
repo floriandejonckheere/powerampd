@@ -14,6 +14,9 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.widget.Toast;
 
+import be.thalarion.android.powerampd.service.DaemonService;
+import be.thalarion.android.powerampd.service.ZeroConfThread;
+
 public class MainActivity extends PreferenceActivity {
 
     @Override
@@ -33,7 +36,7 @@ public class MainActivity extends PreferenceActivity {
         findPreference("pref_mdns_hostname").setSummary(
                 PreferenceManager.getDefaultSharedPreferences(this).getString(
                         "pref_mdns_hostname",
-                        Build.MODEL.replace(' ', '-')));
+                        getString(R.string.pref_mdns_hostname_default)));
 
         findPreference("pref_enabled").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -59,9 +62,10 @@ public class MainActivity extends PreferenceActivity {
                     return false;
                 }
                 preference.setSummary((String) o);
-                synchronized (NetworkDiscoveryThread.lock) {
-                    NetworkDiscoveryThread.lock.notifyAll();
-                }
+
+                if (DaemonService.instance != null)
+                    DaemonService.instance.startZeroConfThread();
+
                 return true;
             }
         };

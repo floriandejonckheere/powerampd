@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.service;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +27,7 @@ import be.thalarion.android.powerampd.protocol.ProtocolException;
  */
 public class State {
 
-    protected Context context;
+    private Context context;
     private Socket socket;
 
     private BufferedReader reader;
@@ -130,5 +130,9 @@ public class State {
 
     public SharedPreferences getPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

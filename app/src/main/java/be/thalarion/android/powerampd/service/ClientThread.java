@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd;
+package be.thalarion.android.powerampd.service;
 
 import android.content.Context;
 
@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.net.Socket;
 
 import be.thalarion.android.powerampd.command.Command;
+import be.thalarion.android.powerampd.command.Parser;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolOK;
+import be.thalarion.android.powerampd.service.State;
 
 /**
  * ClientThread - handles information flow from and to a client
