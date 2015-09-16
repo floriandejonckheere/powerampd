@@ -53,4 +53,15 @@ public class PlaybackControl {
         }
     }
 
+    public static class Stop extends Command {
+        public Stop(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
+
+        @Override
+        public void executeCommand(State state)
+                throws ProtocolException {
+            checkArguments(0, 0);
+            state.command(PowerampAPI.Commands.STOP);
+        }
+    }
+
 }
