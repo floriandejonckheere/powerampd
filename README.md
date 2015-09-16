@@ -54,12 +54,17 @@ The applications needs the following permissions:
 - MPD Protocol parsing framework v2
 	- Implemented commands: close, next, previous, pause, stop, setvol, ping, password, command_list_begin, command_list_ok_begin, command_list_end
 - Access control
+- ZeroConf support
 
 **v0.3**
 
-- ZeroConf support
+- Full playback control
 
 **v0.4**
+
+- Basic playlist manipulation
+
+**v0.5**
 
 - Extended MPD protocol (library access)
 
