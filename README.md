@@ -46,12 +46,13 @@ The applications needs the following permissions:
 
 **v0.1**
 
-- MPD Protocol parser
-    - Implemented commands: close, next, previous, pause
+- MPD Protocol parsing framework
+	- Implemented commands: close, next, previous, pause
 
 **v0.2**
 
-- Basic MPD protocol (playback control, song information)
+- MPD Protocol parsing framework v2
+	- Implemented commands: close, next, previous, pause, stop, setvol, ping, password, command_list_begin, command_list_ok_begin, command_list_end
 - Access control
 
 **v0.3**
