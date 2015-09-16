@@ -35,6 +35,15 @@
             android:singleLine="true"
             android:maxLines="1" />
 
+        <EditTextPreference
+            android:key="pref_timeout"
+            android:title="@string/pref_timeout"
+            android:defaultValue="@string/pref_timeout_default"
+            android:selectAllOnFocus="true"
+            android:inputType="number"
+            android:singleLine="true"
+            android:maxLines="1" />
+
         <Preference
             android:key="pref_sub_auth"
             android:title="@string/title_auth" />

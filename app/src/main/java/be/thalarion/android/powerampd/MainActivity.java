@@ -60,6 +60,24 @@ public class MainActivity extends PreferenceActivity {
         findPreference("pref_mdns_name").setOnPreferenceChangeListener(mDNSListener);
         findPreference("pref_mdns_hostname").setOnPreferenceChangeListener(mDNSListener);
 
+        findPreference("pref_timeout").setSummary(
+                getString(R.string.pref_timeout_desc,
+                    Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(this).getString(
+                            "pref_timeout",
+                            getString(R.string.pref_timeout_default)))));
+
+        findPreference("pref_timeout").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                if (((String) o).length() == 0 || Integer.valueOf((String) o) < 0) {
+                    Toast.makeText(getApplicationContext(), R.string.toast_error_timeout_invalid, Toast.LENGTH_LONG).show();
+                    return false;
+                }
+                preference.setSummary(getString(R.string.pref_timeout_desc, Integer.valueOf((String) o)));
+                return true;
+            }
+        });
+
         NetworkBroadcastReceiver.toggleService(getApplicationContext());
     }
 

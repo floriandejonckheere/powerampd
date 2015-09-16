@@ -157,7 +157,10 @@ public class DaemonService extends Service {
             try {
                 serverSocket = new ServerSocket(port);
                 while (!Thread.currentThread().isInterrupted()) {
+                    int timeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                                        .getString("pref_timeout", getString(R.string.pref_timeout_default)));
                     socket = serverSocket.accept();
+                    socket.setSoTimeout(timeout * 1000);
                     clientSockets.add(socket);
                     new Thread(new ClientThread(getApplicationContext(), socket)).start();
                 }

@@ -12,6 +12,7 @@
     <string name="toast_error_client">PoweraMPD: error connecting to client</string>
     <string name="toast_error_password_length">Password must be at least one character</string>
     <string name="toast_error_mdns_name_length">Name must be at least one character</string>
+    <string name="toast_error_timeout_invalid">Timeout must be zero or a positive number</string>
     <string name="toast_error_cancel">Edit cancelled</string>
 
     <string name="title_settings">Settings</string>
@@ -31,6 +32,10 @@
 
     <string name="pref_port">Port</string>
     <string name="pref_port_default">6600</string>
+
+    <string name="pref_timeout">Connection timeout</string>
+    <string name="pref_timeout_default">5</string>
+    <string name="pref_timeout_desc">%1$d seconds</string>
 
     <string name="pref_auth_enabled">Require password</string>
     <string name="pref_auth_enabled_default">false</string>
