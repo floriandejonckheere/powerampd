@@ -3,6 +3,7 @@ package be.thalarion.android.powerampd;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -37,7 +38,10 @@ public class NetworkDiscoveryThread implements Runnable {
         multicastLock.acquire();
 
         try {
-            jmDNS = JmDNS.create();
+            String hostname = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString("pref_mdns_hostname", Build.MODEL.replace(' ', '-'));
+            jmDNS = JmDNS.create(hostname);
+            Log.i("powerampd-mdns", jmDNS.getHostName());
 
             // Register ServiceInfo
             register();

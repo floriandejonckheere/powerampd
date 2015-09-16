@@ -12,10 +12,16 @@
             android:defaultValue="false" />
 
         <EditTextPreference
+            android:key="pref_mdns_hostname"
+            android:title="@string/pref_mdns_hostname"
+            android:defaultValue="@string/pref_mdns_hostname_default"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+        <EditTextPreference
             android:key="pref_mdns_name"
             android:title="@string/pref_mdns_name"
             android:defaultValue="@string/pref_mdns_name_default"
-            android:selectAllOnFocus="true"
             android:singleLine="true"
             android:maxLines="1" />
 

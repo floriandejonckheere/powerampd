@@ -10,7 +10,7 @@
     <string name="toast_error_bind">PoweraMPD: error binding to address</string>
     <string name="toast_error_client">PoweraMPD: error connecting to client</string>
     <string name="toast_error_password_length">Password must be at least one character</string>
-    <string name="toast_error_mdns_name_length">Service name must be at least one character</string>
+    <string name="toast_error_mdns_name_length">Name must be at least one character</string>
     <string name="toast_error_cancel">Edit cancelled</string>
 
     <string name="title_settings">Settings</string>
@@ -23,6 +23,9 @@
 
     <string name="pref_mdns_name">mDNS Service Name</string>
     <string name="pref_mdns_name_default">MPD Server</string>
+
+    <string name="pref_mdns_hostname">mDNS Hostname</string>
+    <string name="pref_mdns_hostname_default">MY-DEVICE</string>
 
     <string name="pref_port">Port</string>
     <string name="pref_port_default">6600</string>
