@@ -62,8 +62,6 @@ public class ZeroConfThread implements Runnable {
                 }
             });
 
-            Log.i("powerampd-mdns", jmDNS.getInterface().getCanonicalHostName());
-
             // Register ServiceInfo
             HashMap<String, byte[]> properties = new HashMap<String, byte[]>();
             properties.put("description", context.getString(R.string.mdns_description).getBytes());

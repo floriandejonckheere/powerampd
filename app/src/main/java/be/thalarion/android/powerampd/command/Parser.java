@@ -53,15 +53,22 @@ public class Parser {
 
         try {
             switch (COMMAND.valueOf(cmdline.get(0).toUpperCase())) {
-                // TODO: add error to queue when list already started
                 case COMMAND_LIST_BEGIN:
+                    if (commandList != null)
+                        throw new IllegalArgumentException();
+
                     commandList = new CommandList(CommandList.MODE.LIST);
                     return new Connection.Null();
                 case COMMAND_LIST_OK_BEGIN:
+                    if (commandList != null)
+                        throw new IllegalArgumentException();
+
                     commandList = new CommandList(CommandList.MODE.LIST_OK);
                     return new Connection.Null();
                 case COMMAND_LIST_END:
-                    // TODO: error on no list
+                    if (commandList == null)
+                        throw new IllegalArgumentException();
+
                     Executable list = commandList;
                     commandList = null;
                     return list;
@@ -78,12 +85,10 @@ public class Parser {
         }
 
         if (commandList == null) {
-            Log.i("powerampd-parser", "single command");
             CommandList singleList = new CommandList(CommandList.MODE.LIST);
             singleList.add(command);
             return singleList;
         } else {
-            Log.i("powerampd-parser", "adding to list");
             commandList.add(command);
             return new Connection.Null();
         }

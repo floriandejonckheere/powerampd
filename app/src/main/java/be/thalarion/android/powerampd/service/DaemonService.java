@@ -106,7 +106,6 @@ public class DaemonService extends Service {
     @Override
     public void onDestroy() {
         if (serverThread != null) {
-            Log.i("powerampd-daemon", "Stopping service");
             // Set interrupt flag
             serverThread.interrupt();
             try {
@@ -125,7 +124,6 @@ public class DaemonService extends Service {
     }
 
     private void register() {
-        Log.i("powerampd", "DaemonService.register()");
         /**
          * Poweramp broadcast receivers
          */
@@ -137,7 +135,6 @@ public class DaemonService extends Service {
     }
 
     private void unregister() {
-        Log.i("powerampd", "DaemonService.unregister()");
         /**
          * Poweramp broadcast receivers
          */
@@ -169,7 +166,6 @@ public class DaemonService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                Log.i("powerampd-server", "Stopping server thread and client threads");
                 for (Socket s: clientSockets) {
                     if (!s.isClosed())
                         try {
