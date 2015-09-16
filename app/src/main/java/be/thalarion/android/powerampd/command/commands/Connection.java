@@ -11,20 +11,30 @@ import be.thalarion.android.powerampd.protocol.ProtocolException;
 public class Connection {
 
     public static class Close extends Command {
-        public Close(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_NONE, 0, 0); }
+        public Close() { super(null, Permission.PERMISSION_NONE); }
 
         @Override
         public void executeCommand(State state) throws ProtocolException {
             state.close();
-            throw new ProtocolException.EmptyException();
         }
     }
 
+    /**
+     * Null - empty response
+     */
+    public static class Null extends Command {
+        public Null() { super(null, Permission.PERMISSION_NONE); }
+
+        @Override
+        public void executeCommand(State state) throws ProtocolException {}
+    }
+
     public static class Password extends Command {
-        public Password(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_NONE, 1, 1); }
+        public Password(List<String> cmdline) { super(cmdline, Permission.PERMISSION_NONE); }
 
         @Override
         public void executeCommand(State state) throws ProtocolException {
+            checkArguments(1, 1);
             if (!state.authenticate(cmdline.get(1)))
                 throw new ProtocolException(ProtocolException.ACK_ERROR_PASSWORD, cmdline.get(0),
                         state.context.getString(R.string.proto_error_password));
@@ -32,9 +42,11 @@ public class Connection {
     }
 
     public static class Ping extends Command {
-        public Ping() throws ProtocolException { super(null, Permission.PERMISSION_NONE, 0, 0); }
+        public Ping(List<String> cmdline) { super(cmdline, Permission.PERMISSION_NONE); }
 
         @Override
-        public void executeCommand(State state) throws ProtocolException {}
+        public void executeCommand(State state) throws ProtocolException {
+            checkArguments(0, 0);
+        }
     }
 }

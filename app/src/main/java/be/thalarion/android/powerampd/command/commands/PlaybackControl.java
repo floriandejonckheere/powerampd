@@ -13,21 +13,23 @@ import be.thalarion.android.powerampd.protocol.ProtocolException;
 public class PlaybackControl {
 
     public static class Next extends Command {
-        public Next(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_CONTROL, 0, 0); }
+        public Next(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
         public void executeCommand(State state)
                 throws ProtocolException {
+            checkArguments(0, 0);
             state.command(PowerampAPI.Commands.NEXT);
         }
     }
 
     public static class Pause extends Command {
-        public Pause(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_CONTROL, 0, 1); }
+        public Pause(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
         public void executeCommand(State state)
                 throws ProtocolException {
+            checkArguments(0, 1);
             if (cmdline.size() > 1) {
                 if (cmdline.get(1).equals("0")) {
                     state.command(PowerampAPI.Commands.RESUME);
@@ -41,11 +43,12 @@ public class PlaybackControl {
     }
 
     public static class Previous extends Command {
-        public Previous(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_CONTROL, 0, 0); }
+        public Previous(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
         public void executeCommand(State state)
                 throws ProtocolException {
+            checkArguments(0, 0);
             state.command(PowerampAPI.Commands.PREVIOUS);
         }
     }

@@ -13,7 +13,7 @@ public class PlaybackOptions {
 
     public static class Consume extends Command {
 
-        public Consume(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_CONTROL, 1, 1); }
+        public Consume() { super(null, Permission.PERMISSION_CONTROL); }
         @Override
         public void executeCommand(State state) throws ProtocolException {
             throw new ProtocolException(
@@ -24,10 +24,11 @@ public class PlaybackOptions {
     }
 
     public static class Volume extends Command {
-        public Volume(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_NONE, 1, 1); }
+        public Volume(List<String> cmdline) { super(cmdline, Permission.PERMISSION_NONE); }
 
         @Override
         public void executeCommand(State state) throws ProtocolException {
+            checkArguments(1, 1);
             try {
                 int volume = Integer.parseInt(cmdline.get(1));
                 if (volume > 100)

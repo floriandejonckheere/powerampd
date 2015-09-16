@@ -20,10 +20,6 @@ import be.thalarion.android.powerampd.protocol.ProtocolException;
 public class Parser {
 
     private final Context context;
-
-    /**
-     * executable - null if a single command is processed, populated if a COMMAND_LIST has been started
-     */
     private CommandList commandList;
 
     private enum COMMAND {
@@ -53,38 +49,46 @@ public class Parser {
             throws ProtocolException {
         List<String> cmdline = tokenize(commandline);
 
+        Command command;
+
         try {
             switch (COMMAND.valueOf(cmdline.get(0).toUpperCase())) {
+                // TODO: add error to queue when list already started
                 case COMMAND_LIST_BEGIN:
-                    Log.i("powerampd", "new commandList");
-                    commandList = new CommandList(false);
-                    throw new ProtocolException.EmptyException();
+                    Log.i("powerampd-parser", "new list");
+                    commandList = new CommandList(CommandList.MODE.LIST);
+                    return new Connection.Null();
                 case COMMAND_LIST_OK_BEGIN:
-                    Log.i("powerampd", "new commandList");
-                    commandList = new CommandList(true);
-                    throw new ProtocolException.EmptyException();
+                    Log.i("powerampd-parser", "new listOK");
+                    commandList = new CommandList(CommandList.MODE.LIST_OK);
+                    return new Connection.Null();
                 case COMMAND_LIST_END:
-                    Log.i("powerampd", "end of commandList");
-                    CommandList list = commandList;
+                    // TODO: error on no list
+                    Log.i("powerampd-parser", "end list");
+                    Executable list = commandList;
                     commandList = null;
                     return list;
                 default:
-                    Command command = toCommand(cmdline);
-                    if (commandList == null) {
-                        Log.i("powerampd", "commandList is null");
-                        return command;
-                    } else {
-                        Log.i("powerampd", "commandList is NOT null");
-                        commandList.add(command);
-                        throw new ProtocolException.EmptyException();
-                    }
+                    command = toCommand(cmdline);
             }
         } catch (ProtocolException e) {
             throw e;
         } catch (IllegalArgumentException e) {
             // Unknown command
-            throw new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0),
-                    String.format(context.getString(R.string.proto_error_command_unknown), cmdline.get(0)));
+            command = new Meta.DelayedException(
+                        new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0),
+                                String.format(context.getString(R.string.proto_error_command_unknown), cmdline.get(0))));
+        }
+
+        if (commandList == null) {
+            Log.i("powerampd-parser", "single command");
+            CommandList singleList = new CommandList(CommandList.MODE.LIST);
+            singleList.add(command);
+            return singleList;
+        } else {
+            Log.i("powerampd-parser", "adding to list");
+            commandList.add(command);
+            return new Connection.Null();
         }
     }
 
@@ -92,9 +96,9 @@ public class Parser {
             throws ProtocolException {
         switch (COMMAND.valueOf(cmdline.get(0).toUpperCase())) {
             case CLOSE:
-                return new Connection.Close(cmdline);
+                return new Connection.Close();
             case CONSUME:
-                return new PlaybackOptions.Consume(cmdline);
+                return new PlaybackOptions.Consume();
             case CURRENTSONG:
                 return new PlaybackStatus.CurrentSong(cmdline);
             case DEBUG:
@@ -106,7 +110,7 @@ public class Parser {
             case PAUSE:
                 return new PlaybackControl.Pause(cmdline);
             case PING:
-                return new Connection.Ping();
+                return new Connection.Ping(cmdline);
             case PREVIOUS:
                 return new PlaybackControl.Previous(cmdline);
             case SETVOL:

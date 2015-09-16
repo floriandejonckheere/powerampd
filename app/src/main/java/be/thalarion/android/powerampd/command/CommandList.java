@@ -1,31 +1,45 @@
 package be.thalarion.android.powerampd.command;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolListOK;
+import be.thalarion.android.powerampd.protocol.ProtocolOK;
 
 public class CommandList implements Executable {
 
-    private final List<Command> list;
-    private final boolean listOk;
+    public enum MODE {
+        LIST,
+        LIST_OK
+    }
 
-    /**
-     * CommandList - list of commands
-     * @param listOk whether to send a 'list_OK' after executing every command
-     */
-    public CommandList(boolean listOk) {
+    private final List<Command> list;
+    private final MODE mode;
+
+    public CommandList(MODE mode) {
         this.list = new ArrayList<Command>();
-        this.listOk = listOk;
+        this.mode = mode;
     }
 
     public void execute(State state)
             throws ProtocolException {
-        for (Command command : list) {
-            command.execute(state);
-            if (listOk)
-                state.send(new ProtocolListOK());
+        int i = 0;
+        try {
+            for (Command command : list) {
+                command.execute(state);
+
+                i++;
+
+                if (mode.equals(MODE.LIST_OK))
+                    state.send(new ProtocolListOK());
+            }
+            state.send(new ProtocolOK());
+        } catch (ProtocolException e) {
+            // Set line on which the execution failed
+            e.setLine(i);
+            throw e;
         }
     }
 

@@ -18,7 +18,7 @@ public class ProtocolException extends Exception implements Protocol {
 
 
     private final int error;
-    private final int line;
+    private int line;
     private final String command;
     private final String message;
 
@@ -46,13 +46,5 @@ public class ProtocolException extends Exception implements Protocol {
         return String.format("ACK [%d@%d] {%s} %s\n", this.error, this.line, this.command, this.message);
     }
 
-    public static class EmptyException extends ProtocolException {
-
-        public EmptyException() { super(0, null); }
-
-        @Override
-        public String toString() {
-            return "";
-        }
-    }
+    public void setLine(int line) { this.line = line; }
 }

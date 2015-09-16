@@ -14,21 +14,24 @@ import be.thalarion.android.powerampd.protocol.ProtocolMessage;
 public class PlaybackStatus {
 
     public static class CurrentSong extends Command {
-        public CurrentSong(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_READ, 0, 0); }
+        public CurrentSong(List<String> cmdline) { super(cmdline, Permission.PERMISSION_READ); }
 
         @Override
         public void executeCommand(State state)
                 throws ProtocolException {
+            checkArguments(0, 0);
             state.send(new ProtocolMessage(String.format("Title: %s",
                     SystemState.getTrack().getString(PowerampAPI.Track.TITLE))));
         }
     }
 
     public static class Status extends Command {
-        public Status(List<String> cmdline) throws ProtocolException { super(cmdline, Permission.PERMISSION_READ, 0, 0); }
+        public Status(List<String> cmdline) { super(cmdline, Permission.PERMISSION_READ); }
 
         @Override
-        public void executeCommand(State state) throws ProtocolException {
+        public void executeCommand(State state)
+                throws ProtocolException {
+            checkArguments(0, 0);
             state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.context)))));
             state.send(new ProtocolMessage(String.format("repeat: %d", SystemState.getRepeat())));
             state.send(new ProtocolMessage(String.format("random: %d", SystemState.getShuffle())));

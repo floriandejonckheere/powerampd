@@ -58,7 +58,7 @@
     <string name="proto_error_consume">Consume mode is not supported</string>
     <string name="proto_error_command_implemented">command not implemented</string>
     <string name="proto_error_command_none">No command given</string>
-    <string name="proto_error_command_unknown">unknown command "%s"</string>
+    <string name="proto_error_command_unknown">unknown command \"%s\"</string>
     <string name="proto_error_password">incorrect password</string>
     <string name="proto_error_pause_arg">Boolean (0/1) expected: %s</string>
     <string name="proto_error_volume_invalid">Invalid volume value</string>
