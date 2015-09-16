@@ -95,7 +95,7 @@ public class DaemonService extends Service {
                     String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
 
                     updateOrSetNotification(getApplicationContext(), getString(R.string.notification_title_running),
-                            String.format(getString(R.string.notification_text_running_ip), ip, port));
+                            getString(R.string.notification_text_running_ip, ip, port));
                 }
             });
         }

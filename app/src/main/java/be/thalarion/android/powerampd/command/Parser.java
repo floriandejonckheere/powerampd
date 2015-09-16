@@ -81,7 +81,7 @@ public class Parser {
             // Unknown command
             command = new Meta.DelayedException(
                     new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0),
-                            String.format(context.getString(R.string.proto_error_command_unknown), cmdline.get(0))));
+                            context.getString(R.string.proto_error_command_unknown, cmdline.get(0))));
         }
 
         if (commandList == null) {

@@ -37,11 +37,11 @@ public class PlaybackOptions {
 
                 if (volume < 0)
                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                            String.format(state.getContext().getString(R.string.proto_error_volume_integer), cmdline.get(1)));
+                            state.getContext().getString(R.string.proto_error_volume_integer, cmdline.get(1)));
                 SystemState.setVolume(state.getContext(), volume);
             } catch (NumberFormatException e) {
                 throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                        String.format(state.getContext().getString(R.string.proto_error_volume_integer), cmdline.get(1)));
+                        state.getContext().getString(R.string.proto_error_volume_integer, cmdline.get(1)));
             }
         }
     }

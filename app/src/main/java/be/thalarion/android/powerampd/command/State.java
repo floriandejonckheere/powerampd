@@ -17,6 +17,7 @@ import java.net.Socket;
 import java.util.List;
 
 import be.thalarion.android.powerampd.PasswordEntry;
+import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
@@ -94,7 +95,7 @@ public class State {
 
     public boolean authorize(Permission permission) {
         // Check permissions only if it is enabled
-        if (getPreferences().getBoolean("pref_auth_enabled", true)) {
+        if (getPreferences().getBoolean("pref_auth_enabled", context.getString(R.string.pref_auth_enabled_default).equals("true"))) {
             if (permission == Permission.PERMISSION_NONE)
                 return true;
 
@@ -102,13 +103,13 @@ public class State {
             if (!isAuthenticated()) {
                 switch (permission) {
                     case PERMISSION_READ:
-                        return getPreferences().getBoolean("pref_permission_read_default", false);
+                        return getPreferences().getBoolean("pref_permission_read_default", context.getString(R.string.pref_permission_read_default).equals("true"));
                     case PERMISSION_ADD:
-                        return getPreferences().getBoolean("pref_permission_add_default", false);
+                        return getPreferences().getBoolean("pref_permission_add_default", context.getString(R.string.pref_permission_add_default).equals("true"));
                     case PERMISSION_CONTROL:
-                        return getPreferences().getBoolean("pref_permission_control_default", false);
+                        return getPreferences().getBoolean("pref_permission_control_default", context.getString(R.string.pref_permission_control_default).equals("true"));
                     case PERMISSION_ADMIN:
-                        return getPreferences().getBoolean("pref_permission_admin_default", false);
+                        return getPreferences().getBoolean("pref_permission_admin_default", context.getString(R.string.pref_permission_admin_default).equals("true"));
                 }
             } else {
                 PasswordEntry entry = PasswordEntry.findById(PasswordEntry.class, passwordEntryId);

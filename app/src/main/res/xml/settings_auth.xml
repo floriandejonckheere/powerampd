@@ -9,7 +9,7 @@
             android:key="pref_auth_enabled"
             android:title="@string/pref_auth_enabled"
             android:summary="@string/pref_auth_enabled_desc"
-            android:defaultValue="false" />
+            android:defaultValue="@string/pref_auth_enabled_default" />
 
         <PreferenceScreen
             android:key="pref_permission_default"

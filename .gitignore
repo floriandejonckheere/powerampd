@@ -7,3 +7,4 @@
 /captures
 .idea
 app/src/main/java/com/maxmpz/poweramp/
+app/*.apk

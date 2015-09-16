@@ -37,7 +37,7 @@ public class PlaybackControl {
                     state.command(PowerampAPI.Commands.PAUSE);
                 } else
                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                            String.format(state.getContext().getString(R.string.proto_error_pause_arg), cmdline.get(1)));
+                            state.getContext().getString(R.string.proto_error_pause_arg, cmdline.get(1)));
             } else state.command(PowerampAPI.Commands.TOGGLE_PLAY_PAUSE);
         }
     }

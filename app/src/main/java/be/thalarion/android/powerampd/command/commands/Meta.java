@@ -1,5 +1,6 @@
 package be.thalarion.android.powerampd.command.commands;
 
+import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.command.Command;
 import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.Permission;
@@ -14,7 +15,7 @@ public class Meta {
         @Override
         public void executeCommand(State state) throws ProtocolException {
             state.send(new ProtocolMessage(String.format("authenticated: %s", state.isAuthenticated())));
-            state.send(new ProtocolMessage(String.format("auth_enabled: %s", state.getPreferences().getBoolean("pref_auth_enabled", true))));
+            state.send(new ProtocolMessage(String.format("auth_enabled: %s", state.getPreferences().getBoolean("pref_auth_enabled", state.getContext().getString(R.string.pref_auth_enabled_default).equals("true")))));
             state.send(new ProtocolMessage(String.format("can_none: %s", state.authorize(Permission.PERMISSION_NONE))));
             state.send(new ProtocolMessage(String.format("can_read: %s", state.authorize(Permission.PERMISSION_READ))));
             state.send(new ProtocolMessage(String.format("can_add: %s", state.authorize(Permission.PERMISSION_ADD))));

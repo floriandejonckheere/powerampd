@@ -33,6 +33,7 @@
     <string name="pref_port_default">6600</string>
 
     <string name="pref_auth_enabled">Require password</string>
+    <string name="pref_auth_enabled_default">false</string>
     <string name="pref_auth_enabled_desc">Enable client-server authentication/authorization</string>
 
     <string name="pref_permission_default">Default permissions</string>
@@ -41,12 +42,16 @@
     <string name="pref_password_default">&lt;password&gt;</string>
 
     <string name="pref_permission_read">Read</string>
+    <string name="pref_permission_read_default">false</string>
     <string name="pref_permission_read_desc">Allow reading the database, displaying the current playlist and status of MPD</string>
     <string name="pref_permission_add">Add</string>
+    <string name="pref_permission_add_default">false</string>
     <string name="pref_permission_add_desc">Allow adding songs and loading playlists</string>
     <string name="pref_permission_control">Control</string>
+    <string name="pref_permission_control_default">false</string>
     <string name="pref_permission_control_desc">Allow player and playlist manipulation</string>
     <string name="pref_permission_admin">Admin</string>
+    <string name="pref_permission_admin_default">false</string>
     <string name="pref_permission_admin_desc">Allow all manipulations</string>
 
     <string name="action_add">Add</string>
@@ -62,9 +67,9 @@
     <string name="proto_error_consume">Consume mode is not supported</string>
     <string name="proto_error_command_implemented">command not implemented</string>
     <string name="proto_error_command_none">No command given</string>
-    <string name="proto_error_command_unknown">unknown command \"%s\"</string>
+    <string name="proto_error_command_unknown" formatted="false">unknown command "%1$s"</string>
     <string name="proto_error_password">incorrect password</string>
-    <string name="proto_error_pause_arg">Boolean (0/1) expected: %s</string>
+    <string name="proto_error_pause_arg" formatted="false">Boolean (0/1) expected: %1$s</string>
     <string name="proto_error_volume_invalid">Invalid volume value</string>
-    <string name="proto_error_volume_integer">Integer expected: %s</string>
+    <string name="proto_error_volume_integer" formatted="false">Integer expected: %1$s</string>
 </resources>
