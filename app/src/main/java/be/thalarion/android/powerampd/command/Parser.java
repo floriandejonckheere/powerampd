@@ -47,6 +47,7 @@ public class Parser {
 
     public Executable parse(String commandline)
             throws ProtocolException {
+        Log.i("powerampd", String.format("Parsing command %s", commandline));
         List<String> cmdline = tokenize(commandline);
 
         Command command;
