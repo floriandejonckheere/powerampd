@@ -110,8 +110,8 @@ Deprecated commands are implemented to maintain compatibility.
 | `search`                  |  |
 | `searchadd`               |  |
 | `searchaddpl`             |  |
-| `update`                  |  |
-| `rescan`                  |  |
+| `update`                  | Partially implemented |
+| `rescan`                  | Partially implemented |
 
 ## Mounts
 

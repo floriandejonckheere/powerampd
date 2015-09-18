@@ -8,6 +8,7 @@ import java.util.List;
 
 import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.command.commands.Connection;
+import be.thalarion.android.powerampd.command.commands.Database;
 import be.thalarion.android.powerampd.command.commands.Meta;
 import be.thalarion.android.powerampd.command.commands.PlaybackControl;
 import be.thalarion.android.powerampd.command.commands.PlaybackOptions;
@@ -34,8 +35,10 @@ public class Parser {
         PAUSE,
         PING,
         PREVIOUS,
+        RESCAN,
         SETVOL,
         STATUS,
+        UPDATE,
         VOLUME,
 
         DEBUG
@@ -47,7 +50,7 @@ public class Parser {
 
     public Executable parse(String commandline)
             throws ProtocolException {
-        Log.i("powerampd", String.format("Parsing command %s", commandline));
+        Log.i("powerampd", String.format("Parsing command \"%s\"", commandline));
         List<String> cmdline = tokenize(commandline);
 
         Command command;
@@ -116,11 +119,15 @@ public class Parser {
                 return new Connection.Ping(cmdline);
             case PREVIOUS:
                 return new PlaybackControl.Previous(cmdline);
+            case RESCAN:
+                return new Database.Rescan(cmdline);
+            case STATUS:
+                return new PlaybackStatus.Status(cmdline);
+            case UPDATE:
+                return new Database.Update(cmdline);
             case SETVOL:
             case VOLUME:
                 return new PlaybackOptions.Volume(cmdline);
-            case STATUS:
-                return new PlaybackStatus.Status(cmdline);
             default:
                 throw new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0),
                         context.getString(R.string.proto_error_command_implemented));

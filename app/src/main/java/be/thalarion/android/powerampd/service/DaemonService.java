@@ -13,7 +13,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.Formatter;
-import android.util.Log;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
@@ -26,6 +25,7 @@ import java.util.List;
 
 import be.thalarion.android.powerampd.MainActivity;
 import be.thalarion.android.powerampd.R;
+import be.thalarion.android.powerampd.state.DatabaseState;
 
 public class DaemonService extends Service {
 
@@ -38,6 +38,8 @@ public class DaemonService extends Service {
     private BroadcastReceiver trackBroadcastReceiver;
     private BroadcastReceiver statusBroadcastReceiver;
     private BroadcastReceiver playingModeBroadcastReceiver;
+
+    private BroadcastReceiver scanBroadcastReceiver;
 
     // Daemon
     private Thread serverThread;
@@ -74,6 +76,17 @@ public class DaemonService extends Service {
             @Override
             public void onReceive(Context context, Intent intent) {
                 SystemState.playingModeIntent = intent;
+            }
+        };
+        this.scanBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals(PowerampAPI.Scanner.ACTION_DIRS_SCAN_STARTED) || action.equals(PowerampAPI.Scanner.ACTION_TAGS_SCAN_STARTED)) {
+                    DatabaseState.scanning = true;
+                } else if (action.equals(PowerampAPI.Scanner.ACTION_DIRS_SCAN_FINISHED) || action.equals(PowerampAPI.Scanner.ACTION_TAGS_SCAN_FINISHED)) {
+                    DatabaseState.scanning = false;
+                }
             }
         };
     }
@@ -131,6 +144,15 @@ public class DaemonService extends Service {
         registerReceiver(statusBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED));
         registerReceiver(playingModeBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_PLAYING_MODE_CHANGED));
 
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(PowerampAPI.Scanner.ACTION_DIRS_SCAN_STARTED);
+        filter.addAction(PowerampAPI.Scanner.ACTION_DIRS_SCAN_FINISHED);
+        filter.addAction(PowerampAPI.Scanner.ACTION_TAGS_SCAN_STARTED);
+        filter.addAction(PowerampAPI.Scanner.ACTION_TAGS_SCAN_PROGRESS);
+        filter.addAction(PowerampAPI.Scanner.ACTION_TAGS_SCAN_FINISHED);;
+        filter.addAction(PowerampAPI.Scanner.ACTION_FAST_TAGS_SCAN_FINISHED);
+        registerReceiver(scanBroadcastReceiver, filter);
+
         startZeroConfThread();
     }
 
@@ -141,6 +163,8 @@ public class DaemonService extends Service {
         unregisterReceiver(trackBroadcastReceiver);
         unregisterReceiver(statusBroadcastReceiver);
         unregisterReceiver(playingModeBroadcastReceiver);
+
+        unregisterReceiver(scanBroadcastReceiver);
 
         zeroConfThread.interrupt();
     }
@@ -157,9 +181,9 @@ public class DaemonService extends Service {
             try {
                 serverSocket = new ServerSocket(port);
                 while (!Thread.currentThread().isInterrupted()) {
-                    int timeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                        .getString("pref_timeout", getString(R.string.pref_timeout_default)));
                     socket = serverSocket.accept();
+                    int timeout = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                            .getString("pref_timeout", getString(R.string.pref_timeout_default)));
                     socket.setSoTimeout(timeout * 1000);
                     clientSockets.add(socket);
                     new Thread(new ClientThread(getApplicationContext(), socket)).start();
