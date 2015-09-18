@@ -13,7 +13,8 @@
 
         <PreferenceScreen
             android:key="pref_permission_default"
-            android:title="@string/pref_permission_default">
+            android:title="@string/title_default_permissions"
+            android:summary="@string/summary_default_permissions">
 
             <CheckBoxPreference
                 android:key="pref_permission_read_default"
@@ -45,6 +46,7 @@
 
     <PreferenceCategory
         android:key="pref_auth_entries"
-        android:title="@string/title_auth_entries" />
+        android:title="@string/title_auth_entries"
+        android:summary="@string/summary_auth_entries"/>
 
 </PreferenceScreen>
