@@ -26,6 +26,7 @@ import java.util.List;
 import be.thalarion.android.powerampd.MainActivity;
 import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.state.DatabaseState;
+import be.thalarion.android.powerampd.state.SystemState;
 
 public class DaemonService extends Service {
 

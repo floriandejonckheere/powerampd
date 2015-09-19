@@ -1,6 +1,6 @@
 # PoweraMPD
 
-PoweraMPD is an Android application that acts as a virtual MPD server interface to [Poweramp](http://powerampapp.com/). It is written to act exactly like the official MPD server following the [MPD protocol](http://www.musicpd.org/doc/protocol/). As such it should work with any MPD client.
+PoweraMPD is an Android application that acts as a virtual MPD server interface to [Poweramp](http://powerampapp.com/). It is written to act as close to the official MPD server as possible following the [MPD protocol](http://www.musicpd.org/doc/protocol/). If you notice any incompatibilities with any MPD clients, please file an issue.
 
 ## MPD Protocol differences
 
@@ -9,6 +9,8 @@ There are a few differences in protocol response with the official MPD server. T
 - Error handling: the command resulting error is always printed
 - Encoding: special characters are handled better
 - Consume mode is not supported in Poweramp
+- MPD Random mode is called Shuffle in Poweramp
+- Poweramp default shuffle mode can be set in preferences
 
 Poweramp repeat mode mapping is as follows:
 

@@ -12,37 +12,56 @@
             android:checked="true"
             android:defaultValue="false" />
 
-        <EditTextPreference
-            android:key="pref_mdns_hostname"
-            android:title="@string/pref_mdns_hostname"
-            android:defaultValue="@string/pref_mdns_hostname_default"
-            android:singleLine="true"
-            android:maxLines="1" />
+        <PreferenceScreen
+            android:title="@string/title_server_settings">
 
-        <EditTextPreference
-            android:key="pref_mdns_name"
-            android:title="@string/pref_mdns_name"
-            android:defaultValue="@string/pref_mdns_name_default"
-            android:singleLine="true"
-            android:maxLines="1" />
+            <EditTextPreference
+                android:key="pref_port"
+                android:title="@string/pref_port"
+                android:defaultValue="@string/pref_port_default"
+                android:selectAllOnFocus="true"
+                android:inputType="number"
+                android:singleLine="true"
+                android:maxLines="1" />
 
-        <EditTextPreference
-            android:key="pref_port"
-            android:title="@string/pref_port"
-            android:defaultValue="@string/pref_port_default"
-            android:selectAllOnFocus="true"
-            android:inputType="number"
-            android:singleLine="true"
-            android:maxLines="1" />
+            <EditTextPreference
+                android:key="pref_timeout"
+                android:title="@string/pref_timeout"
+                android:defaultValue="@string/pref_timeout_default"
+                android:selectAllOnFocus="true"
+                android:inputType="number"
+                android:singleLine="true"
+                android:maxLines="1" />
 
-        <EditTextPreference
-            android:key="pref_timeout"
-            android:title="@string/pref_timeout"
-            android:defaultValue="@string/pref_timeout_default"
-            android:selectAllOnFocus="true"
-            android:inputType="number"
-            android:singleLine="true"
-            android:maxLines="1" />
+            <PreferenceCategory
+                android:title="@string/title_mdns">
+
+                <EditTextPreference
+                    android:key="pref_mdns_hostname"
+                    android:title="@string/pref_mdns_hostname"
+                    android:defaultValue="@string/pref_mdns_hostname_default"
+                    android:singleLine="true"
+                    android:maxLines="1" />
+
+                <EditTextPreference
+                    android:key="pref_mdns_name"
+                    android:title="@string/pref_mdns_name"
+                    android:defaultValue="@string/pref_mdns_name_default"
+                    android:singleLine="true"
+                    android:maxLines="1" />
+            </PreferenceCategory>
+        </PreferenceScreen>
+
+        <PreferenceScreen
+            android:title="@string/title_behaviour">
+                <ListPreference
+                    android:key="pref_shuffle"
+                    android:title="@string/pref_shuffle"
+                    android:entries="@array/shuffle"
+                    android:entryValues="@array/shuffle_values"
+                    android:defaultValue="@string/pref_shuffle_default" />
+
+        </PreferenceScreen>
 
         <Preference
             android:key="pref_sub_auth"

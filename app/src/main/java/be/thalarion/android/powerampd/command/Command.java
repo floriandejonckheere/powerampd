@@ -51,6 +51,14 @@ public abstract class Command implements Executable {
                         String.format("too many arguments for \"%s\"", cmdline.get(0)));
     }
 
+    /**
+     * checkArguments - check if command has a valid number of arguments
+     * This method should be called first in executeCommand if the argument list
+     * is limited to a certain range.
+     * @param minArgs
+     * @param maxArgs
+     * @throws ProtocolException
+     */
     protected void checkArguments(int minArgs, int maxArgs)
             throws ProtocolException {
         if (cmdline != null)

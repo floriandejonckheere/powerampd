@@ -35,6 +35,7 @@ public class Parser {
         PAUSE,
         PING,
         PREVIOUS,
+        RANDOM,
         RESCAN,
         SETVOL,
         STATUS,
@@ -119,6 +120,8 @@ public class Parser {
                 return new Connection.Ping(cmdline);
             case PREVIOUS:
                 return new PlaybackControl.Previous(cmdline);
+            case RANDOM:
+                return new PlaybackOptions.Random(cmdline);
             case RESCAN:
                 return new Database.Rescan(cmdline);
             case STATUS:

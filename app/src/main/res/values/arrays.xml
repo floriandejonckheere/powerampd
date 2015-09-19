@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="shuffle">
+        <item>Shuffle all</item>
+        <item>Shuffle songs</item>
+        <item>Shuffle categories (songs in order)</item>
+        <item>Shuffle categories and songs</item>
+    </string-array>
+
+    <!-- Don't change this -->
+    <string-array name="shuffle_values">
+        <item>SHUFFLE_ALL</item>
+        <item>SHUFFLE_SONGS</item>
+        <item>SHUFFLE_CATS</item>
+        <item>SHUFFLE_SONGS_AND_CATS</item>
+    </string-array>
+</resources>

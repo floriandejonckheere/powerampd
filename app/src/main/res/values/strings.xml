@@ -18,6 +18,9 @@
     <string name="title_settings">Settings</string>
     <string name="title_auth">Authentication/authorization</string>
     <string name="title_auth_edit">Edit password</string>
+    <string name="title_server_settings">Server settings</string>
+    <string name="title_mdns">Service Discovery</string>
+    <string name="title_behaviour">Behaviour</string>
 
     <string name="title_auth_entries">Passwords</string>
     <string name="summary_auth_entries">Edit password entries</string>
@@ -62,6 +65,10 @@
     <string name="pref_permission_admin_default">false</string>
     <string name="pref_permission_admin_desc">Allow all actions</string>
 
+    <string name="pref_shuffle">Default shuffle mode</string>
+    <string name="pref_shuffle_default">SHUFFLE_SONGS</string>
+    <string name="pref_shuffle_desc">Poweramp shuffle mode to set when enabling shuffle</string>
+
     <string name="action_add">Add</string>
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
@@ -76,7 +83,7 @@
     <string name="proto_error_command_none">No command given</string>
     <string name="proto_error_command_unknown" formatted="false">unknown command "%1$s"</string>
     <string name="proto_error_password">incorrect password</string>
-    <string name="proto_error_pause_arg" formatted="false">Boolean (0/1) expected: %1$s</string>
+    <string name="proto_error_arg_boolean" formatted="false">Boolean (0/1) expected: %1$s</string>
     <string name="proto_error_volume_invalid">Invalid volume value</string>
     <string name="proto_error_volume_integer" formatted="false">Integer expected: %1$s</string>
 </resources>

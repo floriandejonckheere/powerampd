@@ -4,7 +4,7 @@ import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.util.List;
 
-import be.thalarion.android.powerampd.service.SystemState;
+import be.thalarion.android.powerampd.state.SystemState;
 import be.thalarion.android.powerampd.command.Command;
 import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.Permission;
@@ -33,8 +33,8 @@ public class PlaybackStatus {
                 throws ProtocolException {
             checkArguments(0, 0);
             state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.getContext())))));
-            state.send(new ProtocolMessage(String.format("repeat: %d", SystemState.getRepeat())));
-            state.send(new ProtocolMessage(String.format("random: %d", SystemState.getShuffle())));
+            state.send(new ProtocolMessage(String.format("repeat: %d", (SystemState.getRepeat() ? 1 : 0))));
+            state.send(new ProtocolMessage(String.format("random: %d", (SystemState.getRandom() ? 1 : 0))));
             state.send(new ProtocolMessage(String.format("single: %d", SystemState.getSingle())));
             // Consume mode is not supported in Poweramp
             state.send(new ProtocolMessage(String.format("consume: %d", 0)));

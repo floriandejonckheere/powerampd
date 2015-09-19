@@ -1,11 +1,14 @@
-package be.thalarion.android.powerampd.service;
+package be.thalarion.android.powerampd.state;
 
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
+
+import be.thalarion.android.powerampd.R;
 
 /**
  * Resource state of system
@@ -23,22 +26,46 @@ public class SystemState {
         return trackIntent.getBundleExtra(PowerampAPI.TRACK);
     }
 
-    public static int getRepeat() {
+    public static boolean getRepeat() {
         switch (playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1)) {
             case PowerampAPI.RepeatMode.REPEAT_NONE:
-                return 0;
+                return false;
             default:
-                return 1;
+                return true;
         }
     }
 
-    public static int getShuffle() {
+    public static boolean getRandom() {
         switch (playingModeIntent.getIntExtra(PowerampAPI.SHUFFLE, -1)) {
             case PowerampAPI.ShuffleMode.SHUFFLE_NONE:
-                return 0;
+                return false;
             default:
-                return 1;
+                return true;
         }
+    }
+
+    public static void setRandom(Context context, boolean shuffle) {
+        Intent intent = new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.SHUFFLE);
+        if (shuffle) {
+            String mode = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getString("pref_shuffle", context.getString(R.string.pref_shuffle_default));
+
+            int shuffleMode;
+            if (mode.equals("SHUFFLE_ALL")) {
+                shuffleMode = PowerampAPI.ShuffleMode.SHUFFLE_ALL;
+            } else if (mode.equals("SHUFFLE_SONGS")) {
+                shuffleMode = PowerampAPI.ShuffleMode.SHUFFLE_SONGS;
+            } else if (mode.equals("SHUFFLE_CATS")) {
+                shuffleMode = PowerampAPI.ShuffleMode.SHUFFLE_CATS;
+            } else {
+                shuffleMode = PowerampAPI.ShuffleMode.SHUFFLE_SONGS_AND_CATS;
+            }
+            intent.putExtra(PowerampAPI.SHUFFLE, shuffleMode);
+        } else {
+            intent.putExtra(PowerampAPI.SHUFFLE, PowerampAPI.ShuffleMode.SHUFFLE_NONE);
+        }
+        context.startService(intent);
     }
 
     public static int getSingle() {

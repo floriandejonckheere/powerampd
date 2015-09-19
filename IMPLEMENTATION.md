@@ -29,7 +29,7 @@ Deprecated commands are implemented to maintain compatibility.
 | `crossfade`               |  |
 | `mixrampdb`               |  |
 | `mixrampdelay`            |  |
-| `random`                  |  |
+| `random`                  | Implemented |
 | `repeat`                  |  |
 | `setvol`                  | Implemented |
 | `single`                  |  |

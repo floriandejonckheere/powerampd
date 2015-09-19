@@ -1,5 +1,7 @@
 package be.thalarion.android.powerampd.command.commands;
 
+import com.maxmpz.poweramp.player.PowerampAPI;
+
 import java.util.List;
 
 import be.thalarion.android.powerampd.R;
@@ -7,9 +9,27 @@ import be.thalarion.android.powerampd.command.Command;
 import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
-import be.thalarion.android.powerampd.service.SystemState;
+import be.thalarion.android.powerampd.state.SystemState;
 
 public class PlaybackOptions {
+
+    public static class Random extends Command {
+        public Random(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
+
+        @Override
+        public void executeCommand(State state) throws ProtocolException {
+            checkArguments(1, 1);
+            boolean random;
+            if (cmdline.get(1).equals("0")) {
+                random = false;
+            } else if (cmdline.get(1).equals("1")) {
+                random = true;
+            } else
+                throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
+                        state.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(1)));
+            SystemState.setRandom(state.getContext(), random);
+        }
+    }
 
     public static class Consume extends Command {
 
