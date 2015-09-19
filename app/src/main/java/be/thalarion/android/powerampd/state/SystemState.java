@@ -115,6 +115,14 @@ public class SystemState {
                 .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.TOGGLE_PLAY_PAUSE));
     }
 
+    public static String getState(Context context) {
+        if (statusIntent.getIntExtra(PowerampAPI.STATUS, -1) == PowerampAPI.Status.TRACK_PLAYING) {
+            if (statusIntent.getBooleanExtra("paused", false))
+                return context.getString(R.string.proto_status_pause);
+            return context.getString(R.string.proto_status_play);
+        } else return context.getString(R.string.proto_status_stop);
+    }
+
 
     /**
      * System state

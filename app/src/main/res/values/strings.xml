@@ -90,4 +90,7 @@
     <string name="proto_error_arg_boolean" formatted="false">Boolean (0/1) expected: %1$s</string>
     <string name="proto_error_volume_invalid">Invalid volume value</string>
     <string name="proto_error_volume_integer" formatted="false">Integer expected: %1$s</string>
+    <string name="proto_status_play">play</string>
+    <string name="proto_status_pause">pause</string>
+    <string name="proto_status_stop">stop</string>
 </resources>

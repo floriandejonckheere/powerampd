@@ -35,13 +35,13 @@ public class PlaybackStatus {
             state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.getContext())))));
             state.send(new ProtocolMessage(String.format("repeat: %d", (SystemState.getRepeat() ? 1 : 0))));
             state.send(new ProtocolMessage(String.format("random: %d", (SystemState.getRandom() ? 1 : 0))));
-            state.send(new ProtocolMessage(String.format("single: %d", SystemState.getSingle())));
+            state.send(new ProtocolMessage(String.format("single: %d", (SystemState.getSingle() ? 1 : 0))));
             // Consume mode is not supported in Poweramp
             state.send(new ProtocolMessage(String.format("consume: %d", 0)));
             state.send(new ProtocolMessage(String.format("playlist: %d", 0)));
             state.send(new ProtocolMessage(String.format("playlistlength: %d", 0)));
             state.send(new ProtocolMessage(String.format("mixrampdb: %d", 0)));
-            state.send(new ProtocolMessage(String.format("state: %s", "stop")));
+            state.send(new ProtocolMessage(String.format("state: %s", SystemState.getState(state.getContext()))));
             state.send(new ProtocolMessage(String.format("song: %s", 0)));
             state.send(new ProtocolMessage(String.format("songid: %s", 0)));
             state.send(new ProtocolMessage(String.format("nextsong: %s", 0)));
