@@ -54,12 +54,19 @@
 
         <PreferenceScreen
             android:title="@string/title_behaviour">
-                <ListPreference
-                    android:key="pref_shuffle"
-                    android:title="@string/pref_shuffle"
-                    android:entries="@array/shuffle"
-                    android:entryValues="@array/shuffle_values"
-                    android:defaultValue="@string/pref_shuffle_default" />
+            <ListPreference
+                android:key="pref_shuffle"
+                android:title="@string/pref_shuffle"
+                android:entries="@array/shuffle"
+                android:entryValues="@array/shuffle_values"
+                android:defaultValue="@string/pref_shuffle_default" />
+
+            <ListPreference
+                android:key="pref_repeat"
+                android:title="@string/pref_repeat"
+                android:entries="@array/repeat"
+                android:entryValues="@array/repeat_values"
+                android:defaultValue="@string/pref_repeat_default" />
 
         </PreferenceScreen>
 

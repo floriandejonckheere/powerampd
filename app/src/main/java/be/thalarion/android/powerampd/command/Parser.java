@@ -36,6 +36,7 @@ public class Parser {
         PING,
         PREVIOUS,
         RANDOM,
+        REPEAT,
         RESCAN,
         SETVOL,
         STATUS,
@@ -122,6 +123,8 @@ public class Parser {
                 return new PlaybackControl.Previous(cmdline);
             case RANDOM:
                 return new PlaybackOptions.Random(cmdline);
+            case REPEAT:
+                return new PlaybackOptions.Repeat(cmdline);
             case RESCAN:
                 return new Database.Rescan(cmdline);
             case STATUS:

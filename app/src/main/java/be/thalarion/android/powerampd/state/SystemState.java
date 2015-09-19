@@ -35,6 +35,13 @@ public class SystemState {
         }
     }
 
+    public static void setRepeat(Context context, int mode) {
+        Intent intent = new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.REPEAT)
+                .putExtra(PowerampAPI.REPEAT, mode);
+        context.startService(intent);
+    }
+
     public static boolean getRandom() {
         switch (playingModeIntent.getIntExtra(PowerampAPI.SHUFFLE, -1)) {
             case PowerampAPI.ShuffleMode.SHUFFLE_NONE:
@@ -44,34 +51,21 @@ public class SystemState {
         }
     }
 
-    public static void setRandom(Context context, boolean shuffle) {
+    public static void setRandom(Context context, int mode) {
         Intent intent = new Intent(PowerampAPI.ACTION_API_COMMAND)
-                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.SHUFFLE);
-        if (shuffle) {
-            String mode = PreferenceManager.getDefaultSharedPreferences(context)
-                    .getString("pref_shuffle", context.getString(R.string.pref_shuffle_default));
-
-            int shuffleMode;
-            if (mode.equals("SHUFFLE_ALL")) {
-                shuffleMode = PowerampAPI.ShuffleMode.SHUFFLE_ALL;
-            } else if (mode.equals("SHUFFLE_SONGS")) {
-                shuffleMode = PowerampAPI.ShuffleMode.SHUFFLE_SONGS;
-            } else if (mode.equals("SHUFFLE_CATS")) {
-                shuffleMode = PowerampAPI.ShuffleMode.SHUFFLE_CATS;
-            } else {
-                shuffleMode = PowerampAPI.ShuffleMode.SHUFFLE_SONGS_AND_CATS;
-            }
-            intent.putExtra(PowerampAPI.SHUFFLE, shuffleMode);
-        } else {
-            intent.putExtra(PowerampAPI.SHUFFLE, PowerampAPI.ShuffleMode.SHUFFLE_NONE);
-        }
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.SHUFFLE)
+                .putExtra(PowerampAPI.SHUFFLE, mode);
         context.startService(intent);
     }
 
-    public static int getSingle() {
+    public static boolean getSingle() {
+        // REPEAT_SONG <=> single = 1
         if (playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_SONG)
-            return 1;
-        return 0;
+            return true;
+
+        // TODO: check if single mode by stop after current song
+
+        return false;
     }
 
 

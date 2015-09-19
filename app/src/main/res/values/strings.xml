@@ -69,6 +69,10 @@
     <string name="pref_shuffle_default">SHUFFLE_SONGS</string>
     <string name="pref_shuffle_desc">Poweramp shuffle mode to set when enabling shuffle</string>
 
+    <string name="pref_repeat">Default repeat mode</string>
+    <string name="pref_repeat_default">REPEAT_ON</string>
+    <string name="pref_repeat_desc">Poweramp repeat mode to set when enabling repeat</string>
+
     <string name="action_add">Add</string>
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>

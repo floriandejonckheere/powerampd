@@ -30,7 +30,7 @@ Deprecated commands are implemented to maintain compatibility.
 | `mixrampdb`               |  |
 | `mixrampdelay`            |  |
 | `random`                  | Implemented |
-| `repeat`                  |  |
+| `repeat`                  | Partially implemented |
 | `setvol`                  | Implemented |
 | `single`                  |  |
 | `replay_gain_mode`        |  |

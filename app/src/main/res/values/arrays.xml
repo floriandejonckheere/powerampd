@@ -6,12 +6,20 @@
         <item>Shuffle categories (songs in order)</item>
         <item>Shuffle categories and songs</item>
     </string-array>
+    <string-array name="repeat">
+        <item>Repeat list</item>
+        <item>Advance list</item>
+    </string-array>
 
-    <!-- Don't change this -->
+    <!-- Don't below this line -->
     <string-array name="shuffle_values">
         <item>SHUFFLE_ALL</item>
         <item>SHUFFLE_SONGS</item>
         <item>SHUFFLE_CATS</item>
         <item>SHUFFLE_SONGS_AND_CATS</item>
+    </string-array>
+    <string-array name="repeat_values">
+        <item>REPEAT_ON</item>
+        <item>REPEAT_ADVANCE</item>
     </string-array>
 </resources>

@@ -15,16 +15,15 @@ There are a few differences in protocol response with the official MPD server. T
 Poweramp repeat mode mapping is as follows:
 
 ```
-Poweramp                    MPD
+MPD			Poweramp
 
-REPEAT_NONE                 repeat: 0
-                            single: 0
-REPEAT_ON                   repeat: 1
-                            single: 0
-REPEAT_ADVANCE              repeat: 1
-                            single: 0
-REPEAT_SONG                 repeat: 1
-                            single: 1
+(repeat, single)	mode
+
+(0, 0)			REPEAT_NONE
+(0, 1)			Stop playback after current song
+(1, 0)			User defined preference (REPEAT_ON or REPEAT_ADVANCE)
+(1, 1)			REPEAT_SONG
+
 ```
 
 ## License

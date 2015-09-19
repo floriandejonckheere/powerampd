@@ -1,5 +1,7 @@
 package be.thalarion.android.powerampd.command.commands;
 
+import android.preference.PreferenceManager;
+
 import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.util.List;
@@ -19,15 +21,57 @@ public class PlaybackOptions {
         @Override
         public void executeCommand(State state) throws ProtocolException {
             checkArguments(1, 1);
-            boolean random;
-            if (cmdline.get(1).equals("0")) {
-                random = false;
-            } else if (cmdline.get(1).equals("1")) {
-                random = true;
-            } else
-                throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                        state.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(1)));
-            SystemState.setRandom(state.getContext(), random);
+            boolean random = getBoolean(1);
+
+            if (random) {
+                String mode = PreferenceManager.getDefaultSharedPreferences(state.getContext())
+                        .getString("pref_shuffle", state.getContext().getString(R.string.pref_shuffle_default));
+
+                if (mode.equals("SHUFFLE_ALL")) {
+                    SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_ALL);
+                } else if (mode.equals("SHUFFLE_SONGS")) {
+                    SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS);
+                } else if (mode.equals("SHUFFLE_CATS")) {
+                    SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_CATS);
+                } else {
+                    SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS_AND_CATS);
+                }
+            } else {
+                SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_NONE);
+            }
+        }
+    }
+
+    public static class Repeat extends Command {
+        public Repeat(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
+
+        @Override
+        public void executeCommand(State state) throws ProtocolException {
+            checkArguments(1, 1);
+            boolean repeat = getBoolean(1);
+            boolean single = SystemState.getSingle();
+
+            if (repeat) {
+                if (single) {
+                    // Repeat, single -> repeat single song
+                    SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
+                } else {
+                    // Repeat, no single -> user defined repeat mode
+                    String repeatPreference = PreferenceManager.getDefaultSharedPreferences(state.getContext())
+                            .getString("pref_repeat", state.getContext().getString(R.string.pref_repeat_default));
+                    if (repeatPreference.equals("REPEAT_ON")) {
+                        SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
+                    } else SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
+                }
+            } else {
+                if (single) {
+                    // No repeat, single -> play single song and stop
+                    // TODO
+                } else {
+                    // No repeat, no single -> no repeat
+                    SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
+                }
+            }
         }
     }
 

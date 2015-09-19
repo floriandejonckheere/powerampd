@@ -1,8 +1,11 @@
 package be.thalarion.android.powerampd.command;
 
 
+import android.content.Context;
+
 import java.util.List;
 
+import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 
@@ -10,6 +13,7 @@ public abstract class Command implements Executable {
 
     protected final List<String> cmdline;
     private final Permission permission;
+    private State state;
 
     public Command(List<String> cmdline, Permission permission) {
         this.cmdline = cmdline;
@@ -19,6 +23,7 @@ public abstract class Command implements Executable {
     @Override
     public void execute(State state)
             throws ProtocolException {
+        this.state = state;
 
         // Authorize command
         if (!state.authorize(permission))
@@ -72,6 +77,23 @@ public abstract class Command implements Executable {
                 throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                         String.format("too many arguments for \"%s\"", cmdline.get(0)));
             }
+    }
+
+    /**
+     * getBoolean - get a boolean value from the commandline
+     * @param index commandline index (> 0 for arguments)
+     * @return boolean
+     * @throws ProtocolException
+     */
+    protected boolean getBoolean(int index)
+            throws ProtocolException {
+        if (cmdline.get(index).equals("0")) {
+            return false;
+        } else if (cmdline.get(index).equals("1")) {
+            return true;
+        } else
+            throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
+                    state.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(index)));
     }
 
 }
