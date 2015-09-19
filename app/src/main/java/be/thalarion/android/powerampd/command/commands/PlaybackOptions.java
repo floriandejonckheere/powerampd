@@ -66,10 +66,8 @@ public class PlaybackOptions {
             } else {
                 // No repeat, no single -> no repeat
                 SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
-                if (single) {
-                    // No repeat, single -> play single song and stop
-                    // TODO
-                }
+                // No repeat, single -> play single song and stop
+                SystemState.setSingle(state.getContext(), single);
             }
         }
     }
@@ -98,10 +96,8 @@ public class PlaybackOptions {
             } else {
                 // No repeat, no single -> no repeat
                 SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
-                if (single) {
-                    // No repeat, single -> play single song and stop
-                    // TODO
-                }
+                // No repeat, single -> play single song and stop
+                SystemState.setSingle(state.getContext(), single);
             }
         }
     }

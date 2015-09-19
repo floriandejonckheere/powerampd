@@ -9,6 +9,7 @@ import be.thalarion.android.powerampd.command.Command;
 import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
+import be.thalarion.android.powerampd.state.SystemState;
 
 public class PlaybackControl {
 
@@ -19,7 +20,7 @@ public class PlaybackControl {
         public void executeCommand(State state)
                 throws ProtocolException {
             checkArguments(0, 0);
-            state.command(PowerampAPI.Commands.NEXT);
+            SystemState.next(state.getContext());
         }
     }
 
@@ -32,13 +33,13 @@ public class PlaybackControl {
             checkArguments(0, 1);
             if (cmdline.size() > 1) {
                 if (cmdline.get(1).equals("0")) {
-                    state.command(PowerampAPI.Commands.RESUME);
+                    SystemState.resume(state.getContext());
                 } else if (cmdline.get(1).equals("1")) {
-                    state.command(PowerampAPI.Commands.PAUSE);
+                    SystemState.pause(state.getContext());
                 } else
                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                             state.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(1)));
-            } else state.command(PowerampAPI.Commands.TOGGLE_PLAY_PAUSE);
+            } else SystemState.toggle(state.getContext());
         }
     }
 
@@ -49,7 +50,7 @@ public class PlaybackControl {
         public void executeCommand(State state)
                 throws ProtocolException {
             checkArguments(0, 0);
-            state.command(PowerampAPI.Commands.PREVIOUS);
+            SystemState.previous(state.getContext());
         }
     }
 
@@ -60,7 +61,7 @@ public class PlaybackControl {
         public void executeCommand(State state)
                 throws ProtocolException {
             checkArguments(0, 0);
-            state.command(PowerampAPI.Commands.STOP);
+            SystemState.stop(state.getContext());
         }
     }
 

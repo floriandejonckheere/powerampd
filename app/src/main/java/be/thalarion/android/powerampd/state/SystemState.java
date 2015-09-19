@@ -1,7 +1,9 @@
 package be.thalarion.android.powerampd.state;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -21,6 +23,16 @@ public class SystemState {
     public static Intent trackIntent;
     public static Intent statusIntent;
     public static Intent playingModeIntent;
+
+    private static boolean single;
+    private static BroadcastReceiver stopBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int status = intent.getIntExtra(PowerampAPI.STATUS, -1);
+            if (status == PowerampAPI.Status.TRACK_ENDED)
+                stop(context);
+        }
+    };
 
     public static Bundle getTrack() {
         return trackIntent.getBundleExtra(PowerampAPI.TRACK);
@@ -60,16 +72,47 @@ public class SystemState {
 
     public static boolean getSingle() {
         // REPEAT_SONG <=> single = 1
-        if (playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_SONG)
+        if (single || playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_SONG)
             return true;
-
-        // TODO: check if single mode by stop after current song
 
         return false;
     }
 
     public static void setSingle(Context context, boolean single) {
+        SystemState.single = single;
+        if (single) {
+            context.registerReceiver(stopBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED));
+        } else context.unregisterReceiver(stopBroadcastReceiver);
+    }
 
+    public static void stop(Context context) {
+        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.STOP));
+    }
+
+    public static void previous(Context context) {
+        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.PREVIOUS));
+    }
+
+    public static void next(Context context) {
+        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.NEXT));
+    }
+
+    public static void pause(Context context) {
+        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.PAUSE));
+    }
+
+    public static void resume(Context context) {
+        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.RESUME));
+    }
+
+    public static void toggle(Context context) {
+        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.TOGGLE_PLAY_PAUSE));
     }
 
 
@@ -86,10 +129,6 @@ public class SystemState {
         AudioManager audio = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         return ((double) audio.getStreamVolume(AudioManager.STREAM_MUSIC) / audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) * 100;
     }
-
-    /**
-     * System actions
-     */
 
     /**
      * setVolume

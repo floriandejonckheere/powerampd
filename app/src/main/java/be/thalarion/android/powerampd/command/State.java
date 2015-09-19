@@ -64,8 +64,6 @@ public class State {
             writer.flush();
         } catch (IOException e) {
             // IOException thrown on command 'close'
-//            e.printStackTrace();
-//            close();
         }
     }
 
@@ -120,13 +118,6 @@ public class State {
             }
         }
         return true;
-    }
-
-    public void command(int action) {
-        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
-                .setPackage(PowerampAPI.PACKAGE_NAME)
-                .putExtra(PowerampAPI.COMMAND, action)
-        );
     }
 
     public SharedPreferences getPreferences() {

@@ -41,6 +41,7 @@ public class Parser {
         SETVOL,
         SINGLE,
         STATUS,
+        STOP,
         UPDATE,
         VOLUME,
 
@@ -132,6 +133,8 @@ public class Parser {
                 return new PlaybackOptions.Single(cmdline);
             case STATUS:
                 return new PlaybackStatus.Status(cmdline);
+            case STOP:
+                return new PlaybackControl.Stop(cmdline);
             case UPDATE:
                 return new Database.Update(cmdline);
             case SETVOL:
