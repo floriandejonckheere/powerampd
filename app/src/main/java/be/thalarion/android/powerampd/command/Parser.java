@@ -39,6 +39,7 @@ public class Parser {
         REPEAT,
         RESCAN,
         SETVOL,
+        SINGLE,
         STATUS,
         UPDATE,
         VOLUME,
@@ -127,6 +128,8 @@ public class Parser {
                 return new PlaybackOptions.Repeat(cmdline);
             case RESCAN:
                 return new Database.Rescan(cmdline);
+            case SINGLE:
+                return new PlaybackOptions.Single(cmdline);
             case STATUS:
                 return new PlaybackStatus.Status(cmdline);
             case UPDATE:

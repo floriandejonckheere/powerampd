@@ -64,12 +64,43 @@ public class PlaybackOptions {
                     } else SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
                 }
             } else {
+                // No repeat, no single -> no repeat
+                SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
                 if (single) {
                     // No repeat, single -> play single song and stop
                     // TODO
+                }
+            }
+        }
+    }
+
+    public static class Single extends Command {
+        public Single(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
+
+        @Override
+        public void executeCommand(State state) throws ProtocolException {
+            checkArguments(1, 1);
+            boolean repeat = SystemState.getRepeat();
+            boolean single = getBoolean(1);
+
+            if (repeat) {
+                if (single) {
+                    // Repeat, single -> repeat single song
+                    SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
                 } else {
-                    // No repeat, no single -> no repeat
-                    SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
+                    // Repeat, no single -> user defined repeat mode
+                    String repeatPreference = PreferenceManager.getDefaultSharedPreferences(state.getContext())
+                            .getString("pref_repeat", state.getContext().getString(R.string.pref_repeat_default));
+                    if (repeatPreference.equals("REPEAT_ON")) {
+                        SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
+                    } else SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
+                }
+            } else {
+                // No repeat, no single -> no repeat
+                SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
+                if (single) {
+                    // No repeat, single -> play single song and stop
+                    // TODO
                 }
             }
         }

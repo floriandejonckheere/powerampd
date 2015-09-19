@@ -68,6 +68,10 @@ public class SystemState {
         return false;
     }
 
+    public static void setSingle(Context context, boolean single) {
+
+    }
+
 
     /**
      * System state
