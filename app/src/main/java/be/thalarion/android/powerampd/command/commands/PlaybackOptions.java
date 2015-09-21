@@ -11,6 +11,7 @@ import be.thalarion.android.powerampd.command.Command;
 import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
+import be.thalarion.android.powerampd.state.PlaybackOptionsState;
 import be.thalarion.android.powerampd.state.SystemState;
 
 public class PlaybackOptions {
@@ -28,16 +29,16 @@ public class PlaybackOptions {
                         .getString("pref_shuffle", state.getContext().getString(R.string.pref_shuffle_default));
 
                 if (mode.equals("SHUFFLE_ALL")) {
-                    SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_ALL);
+                    PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_ALL);
                 } else if (mode.equals("SHUFFLE_SONGS")) {
-                    SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS);
+                    PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS);
                 } else if (mode.equals("SHUFFLE_CATS")) {
-                    SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_CATS);
+                    PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_CATS);
                 } else {
-                    SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS_AND_CATS);
+                    PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS_AND_CATS);
                 }
             } else {
-                SystemState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_NONE);
+                PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_NONE);
             }
         }
     }
@@ -49,25 +50,25 @@ public class PlaybackOptions {
         public void executeCommand(State state) throws ProtocolException {
             checkArguments(1, 1);
             boolean repeat = getBoolean(1);
-            boolean single = SystemState.getSingle();
+            boolean single = PlaybackOptionsState.getSingle();
 
             if (repeat) {
                 if (single) {
                     // Repeat, single -> repeat single song
-                    SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
+                    PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
                 } else {
                     // Repeat, no single -> user defined repeat mode
                     String repeatPreference = PreferenceManager.getDefaultSharedPreferences(state.getContext())
                             .getString("pref_repeat", state.getContext().getString(R.string.pref_repeat_default));
                     if (repeatPreference.equals("REPEAT_ON")) {
-                        SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
-                    } else SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
+                        PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
+                    } else PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
                 }
             } else {
                 // No repeat, no single -> no repeat
-                SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
+                PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
                 // No repeat, single -> play single song and stop
-                SystemState.setSingle(state.getContext(), single);
+                PlaybackOptionsState.setSingle(state.getContext(), single);
             }
         }
     }
@@ -78,27 +79,27 @@ public class PlaybackOptions {
         @Override
         public void executeCommand(State state) throws ProtocolException {
             checkArguments(1, 1);
-            boolean repeat = SystemState.getRepeat();
+            boolean repeat = PlaybackOptionsState.getRepeat();
             boolean single = getBoolean(1);
 
             if (repeat) {
-                SystemState.setSingle(state.getContext(), false);
+                PlaybackOptionsState.setSingle(state.getContext(), false);
                 if (single) {
                     // Repeat, single -> repeat single song
-                    SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
+                    PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
                 } else {
                     // Repeat, no single -> user defined repeat mode
                     String repeatPreference = PreferenceManager.getDefaultSharedPreferences(state.getContext())
                             .getString("pref_repeat", state.getContext().getString(R.string.pref_repeat_default));
                     if (repeatPreference.equals("REPEAT_ON")) {
-                        SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
-                    } else SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
+                        PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
+                    } else PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
                 }
             } else {
                 // No repeat, no single -> no repeat
-                SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
+                PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
                 // No repeat, single -> play single song and stop
-                SystemState.setSingle(state.getContext(), single);
+                PlaybackOptionsState.setSingle(state.getContext(), single);
             }
         }
     }
@@ -130,7 +131,7 @@ public class PlaybackOptions {
                 if (volume < 0)
                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                             state.getContext().getString(R.string.proto_error_volume_integer, cmdline.get(1)));
-                SystemState.setVolume(state.getContext(), volume);
+                PlaybackOptionsState.setVolume(state.getContext(), volume);
             } catch (NumberFormatException e) {
                 throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                         state.getContext().getString(R.string.proto_error_volume_integer, cmdline.get(1)));

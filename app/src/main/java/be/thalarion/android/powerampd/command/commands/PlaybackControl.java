@@ -1,7 +1,5 @@
 package be.thalarion.android.powerampd.command.commands;
 
-import com.maxmpz.poweramp.player.PowerampAPI;
-
 import java.util.List;
 
 import be.thalarion.android.powerampd.R;
@@ -9,6 +7,8 @@ import be.thalarion.android.powerampd.command.Command;
 import be.thalarion.android.powerampd.command.State;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
+import be.thalarion.android.powerampd.state.PlaybackControlState;
+import be.thalarion.android.powerampd.state.PlaybackOptionsState;
 import be.thalarion.android.powerampd.state.SystemState;
 
 public class PlaybackControl {
@@ -20,7 +20,7 @@ public class PlaybackControl {
         public void executeCommand(State state)
                 throws ProtocolException {
             checkArguments(0, 0);
-            SystemState.next(state.getContext());
+            PlaybackControlState.next(state.getContext());
         }
     }
 
@@ -33,13 +33,13 @@ public class PlaybackControl {
             checkArguments(0, 1);
             if (cmdline.size() > 1) {
                 if (cmdline.get(1).equals("0")) {
-                    SystemState.resume(state.getContext());
+                    PlaybackControlState.resume(state.getContext());
                 } else if (cmdline.get(1).equals("1")) {
-                    SystemState.pause(state.getContext());
+                    PlaybackControlState.pause(state.getContext());
                 } else
                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
                             state.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(1)));
-            } else SystemState.toggle(state.getContext());
+            } else PlaybackControlState.toggle(state.getContext());
         }
     }
 
@@ -50,7 +50,7 @@ public class PlaybackControl {
         public void executeCommand(State state)
                 throws ProtocolException {
             checkArguments(0, 0);
-            SystemState.previous(state.getContext());
+            PlaybackControlState.previous(state.getContext());
         }
     }
 
@@ -61,7 +61,7 @@ public class PlaybackControl {
         public void executeCommand(State state)
                 throws ProtocolException {
             checkArguments(0, 0);
-            SystemState.stop(state.getContext());
+            PlaybackControlState.stop(state.getContext());
         }
     }
 

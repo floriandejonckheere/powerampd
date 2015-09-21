@@ -4,6 +4,8 @@ import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.util.List;
 
+import be.thalarion.android.powerampd.state.PlaybackOptionsState;
+import be.thalarion.android.powerampd.state.PlaybackStatusState;
 import be.thalarion.android.powerampd.state.SystemState;
 import be.thalarion.android.powerampd.command.Command;
 import be.thalarion.android.powerampd.command.State;
@@ -32,16 +34,16 @@ public class PlaybackStatus {
         public void executeCommand(State state)
                 throws ProtocolException {
             checkArguments(0, 0);
-            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(SystemState.getVolume(state.getContext())))));
-            state.send(new ProtocolMessage(String.format("repeat: %d", (SystemState.getRepeat() ? 1 : 0))));
-            state.send(new ProtocolMessage(String.format("random: %d", (SystemState.getRandom() ? 1 : 0))));
-            state.send(new ProtocolMessage(String.format("single: %d", (SystemState.getSingle() ? 1 : 0))));
+            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(PlaybackOptionsState.getVolume(state.getContext())))));
+            state.send(new ProtocolMessage(String.format("repeat: %d", (PlaybackOptionsState.getRepeat() ? 1 : 0))));
+            state.send(new ProtocolMessage(String.format("random: %d", (PlaybackOptionsState.getRandom() ? 1 : 0))));
+            state.send(new ProtocolMessage(String.format("single: %d", (PlaybackOptionsState.getSingle() ? 1 : 0))));
             // Consume mode is not supported in Poweramp
             state.send(new ProtocolMessage(String.format("consume: %d", 0)));
             state.send(new ProtocolMessage(String.format("playlist: %d", 0)));
             state.send(new ProtocolMessage(String.format("playlistlength: %d", 0)));
             state.send(new ProtocolMessage(String.format("mixrampdb: %d", 0)));
-            state.send(new ProtocolMessage(String.format("state: %s", SystemState.getState(state.getContext()))));
+            state.send(new ProtocolMessage(String.format("state: %s", PlaybackStatusState.getState(state.getContext()))));
             state.send(new ProtocolMessage(String.format("song: %s", 0)));
             state.send(new ProtocolMessage(String.format("songid: %s", 0)));
             state.send(new ProtocolMessage(String.format("nextsong: %s", 0)));
