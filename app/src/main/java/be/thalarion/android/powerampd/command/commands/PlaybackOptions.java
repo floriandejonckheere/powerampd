@@ -82,6 +82,7 @@ public class PlaybackOptions {
             boolean single = getBoolean(1);
 
             if (repeat) {
+                SystemState.setSingle(state.getContext(), false);
                 if (single) {
                     // Repeat, single -> repeat single song
                     SystemState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);

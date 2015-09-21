@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
@@ -24,13 +25,23 @@ public class SystemState {
     public static Intent statusIntent;
     public static Intent playingModeIntent;
 
+    // Single mode
     private static boolean single;
     private static BroadcastReceiver stopBroadcastReceiver = new BroadcastReceiver() {
+
+        Long trackID;
+
         @Override
         public void onReceive(Context context, Intent intent) {
-            int status = intent.getIntExtra(PowerampAPI.STATUS, -1);
-            if (status == PowerampAPI.Status.TRACK_ENDED)
+            Log.i("stopBroadcastReceiver", String.format("%d", intent.getBundleExtra(PowerampAPI.TRACK).getLong(PowerampAPI.Track.ID)));
+            Long newTrackID = trackIntent.getBundleExtra(PowerampAPI.TRACK).getLong(PowerampAPI.Track.ID);
+            if (this.trackID == null) {
+                this.trackID = newTrackID;
+            } else if (!this.trackID.equals(newTrackID)) {
+                // Track ID changed, so we must stop now.
+                this.trackID = newTrackID;
                 stop(context);
+            }
         }
     };
 
@@ -39,12 +50,7 @@ public class SystemState {
     }
 
     public static boolean getRepeat() {
-        switch (playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1)) {
-            case PowerampAPI.RepeatMode.REPEAT_NONE:
-                return false;
-            default:
-                return true;
-        }
+        return !(playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_NONE);
     }
 
     public static void setRepeat(Context context, int mode) {
@@ -55,12 +61,7 @@ public class SystemState {
     }
 
     public static boolean getRandom() {
-        switch (playingModeIntent.getIntExtra(PowerampAPI.SHUFFLE, -1)) {
-            case PowerampAPI.ShuffleMode.SHUFFLE_NONE:
-                return false;
-            default:
-                return true;
-        }
+        return !(playingModeIntent.getIntExtra(PowerampAPI.SHUFFLE, -1) == PowerampAPI.ShuffleMode.SHUFFLE_NONE);
     }
 
     public static void setRandom(Context context, int mode) {
@@ -71,18 +72,33 @@ public class SystemState {
     }
 
     public static boolean getSingle() {
-        // REPEAT_SONG <=> single = 1
-        if (single || playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_SONG)
-            return true;
-
-        return false;
+        /**
+         * Single mode is enabled on two conditions:
+         * 1. if repeat mode is REPEAT_SONG
+         * 2. if the single boolean is true
+         */
+        return (single || playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_SONG);
     }
 
     public static void setSingle(Context context, boolean single) {
-        SystemState.single = single;
+        Log.i("powerampd", String.format("setSingle(%s)", Boolean.valueOf(single).toString()));
+
         if (single) {
-            context.registerReceiver(stopBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_STATUS_CHANGED));
-        } else context.unregisterReceiver(stopBroadcastReceiver);
+            if (getRepeat()) {
+                setRepeat(context, PowerampAPI.RepeatMode.REPEAT_SONG);
+            } else {
+                Log.i("powerampd", "Registering stopBroadcastReceiver");
+                context.registerReceiver(stopBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED));
+            }
+        } else {
+            if (getRepeat()) {
+                setRepeat(context, PreferenceManager.getDefaultSharedPreferences(context).getInt("pref_repeat", Integer.valueOf(context.getString(R.string.pref_repeat))));
+            } else {
+                Log.i("powerampd", "Unregistering stopBroadcastReceiver");
+                context.unregisterReceiver(stopBroadcastReceiver);
+            }
+        }
+        SystemState.single = single;
     }
 
     public static void stop(Context context) {

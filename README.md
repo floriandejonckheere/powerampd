@@ -9,10 +9,12 @@ There are a few differences in protocol response with the official MPD server. T
 - Error handling: the command resulting error is always printed
 - Encoding: special characters are handled better
 - Consume mode is not supported in Poweramp
-- MPD Random mode is called Shuffle in Poweramp
-- Poweramp default shuffle mode can be set in preferences
+- MPD's random mode maps onto Poweramp's shuffle mode
+- MPD's repeat and single modes map onto Poweramp's repeat mode
+- MPD's single mode is not natively supported by Poweramp, so a separate process watches track changes in order to stop after one song. This workaround is not perfect, and sometimes results in the next song stopping too late.
+- Poweramp default shuffle/repeat mode can be set in preferences
 
-Poweramp repeat mode mapping is as follows:
+Poweramp repeat and single mode mapping is as follows:
 
 ```
 MPD			Poweramp

@@ -24,6 +24,9 @@ public class MainActivity extends PreferenceActivity {
         bindPreferenceSummaryToValue(findPreference("pref_port"));
         // Can't use multiple OnPreferenceChangeListeners, bind it manually
         // bindPreferenceSummaryToValue(findPreference("pref_mdns_name"));
+        bindPreferenceSummaryToValue(findPreference("pref_shuffle"));
+        bindPreferenceSummaryToValue(findPreference("pref_repeat"));
+
         findPreference("pref_mdns_name").setSummary(
                 PreferenceManager.getDefaultSharedPreferences(this).getString(
                         "pref_mdns_name",
