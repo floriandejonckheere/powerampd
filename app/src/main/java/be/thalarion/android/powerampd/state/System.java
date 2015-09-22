@@ -24,19 +24,20 @@ public class System {
     protected static boolean single;
     protected static BroadcastReceiver stopBroadcastReceiver = new BroadcastReceiver() {
 
-        Long trackID;
+        private long trackId = -1;
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("stopBroadcastReceiver", String.format("%d", intent.getBundleExtra(PowerampAPI.TRACK).getLong(PowerampAPI.Track.ID)));
-            Long newTrackID = trackIntent.getBundleExtra(PowerampAPI.TRACK).getLong(PowerampAPI.Track.ID);
-            if (this.trackID == null) {
-                this.trackID = newTrackID;
-            } else if (!this.trackID.equals(newTrackID)) {
+            long newTrackId = trackIntent.getBundleExtra(PowerampAPI.TRACK).getLong(PowerampAPI.Track.REAL_ID);
+            Log.i("stopBroadcastReceiver", String.format("%d -> %d", trackId, newTrackId));
+            if (trackId == -1) {
+                Log.i("stopBroadcastReceiver", "New track");
+            } else if (trackId != newTrackId) {
                 // Track ID changed, so we must stop now.
-                this.trackID = newTrackID;
+                Log.i("stopBroadcastReceiver", "Stopping playback");
                 PlaybackControl.stop(context);
             }
+            trackId = newTrackId;
         }
     };
 

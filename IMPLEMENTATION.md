@@ -32,7 +32,7 @@ Deprecated commands are implemented to maintain compatibility.
 | `random`                  | Implemented |
 | `repeat`                  | Partially implemented |
 | `setvol`                  | Implemented |
-| `single`                  | Partially implemented |
+| `single`                  | **Currently not supported** |
 | `replay_gain_mode`        |  |
 | `replay_gain_status`      |  |
 | `volume`                  | Deprecated (see `setvol`) |

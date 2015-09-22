@@ -108,7 +108,10 @@ public class Parser {
             case CLOSE:
                 return new Connection.Close();
             case CONSUME:
-                return new PlaybackOptions.Consume();
+                return new Meta.DelayedException(new ProtocolException(
+                        ProtocolException.ACK_ERROR_SYSTEM,
+                        cmdline.get(0),
+                        context.getString(R.string.proto_error_consume)));
             case CURRENTSONG:
                 return new PlaybackStatus.CurrentSong(cmdline);
             case DEBUG:
@@ -130,7 +133,10 @@ public class Parser {
             case RESCAN:
                 return new Database.Rescan(cmdline);
             case SINGLE:
-                return new PlaybackOptions.Single(cmdline);
+                return new Meta.DelayedException(new ProtocolException(
+                        ProtocolException.ACK_ERROR_SYSTEM,
+                        cmdline.get(0),
+                        context.getString(R.string.proto_error_single)));
             case STATUS:
                 return new PlaybackStatus.Status(cmdline);
             case STOP:

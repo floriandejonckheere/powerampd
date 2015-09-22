@@ -11,7 +11,7 @@ There are a few differences in protocol response with the official MPD server. T
 - Consume mode is not supported in Poweramp
 - MPD's random mode maps onto Poweramp's shuffle mode
 - MPD's repeat and single modes map onto Poweramp's repeat mode
-- MPD's single mode is not natively supported by Poweramp, so a separate process watches track changes in order to stop after one song. This workaround is not perfect, and sometimes results in the next song stopping too late.
+- Single mode is currently not supported
 - Poweramp default shuffle/repeat mode can be set in preferences
 
 Poweramp repeat and single mode mapping is as follows:

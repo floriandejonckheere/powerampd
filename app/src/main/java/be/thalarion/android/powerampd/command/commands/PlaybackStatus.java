@@ -34,7 +34,9 @@ public class PlaybackStatus {
             conn.send(new ProtocolMessage(String.format("volume: %d", Math.round(PlaybackOptions.getVolume(conn.getContext())))));
             conn.send(new ProtocolMessage(String.format("repeat: %d", (PlaybackOptions.getRepeat() ? 1 : 0))));
             conn.send(new ProtocolMessage(String.format("random: %d", (PlaybackOptions.getRandom() ? 1 : 0))));
-            conn.send(new ProtocolMessage(String.format("single: %d", (PlaybackOptions.getSingle() ? 1 : 0))));
+            // Single mode is currently not supported
+            conn.send(new ProtocolMessage(String.format("single: %d", 0)));
+//            conn.send(new ProtocolMessage(String.format("single: %d", (PlaybackOptions.getSingle() ? 1 : 0))));
             // Consume mode is not supported in Poweramp
             conn.send(new ProtocolMessage(String.format("consume: %d", 0)));
             conn.send(new ProtocolMessage(String.format("playlist: %d", 0)));

@@ -83,6 +83,7 @@
     <string name="proto_handshake">MPD 0.19.0</string>
 
     <string name="proto_error_consume">Consume mode is not supported</string>
+    <string name="proto_error_single">Single mode is not supported</string>
     <string name="proto_error_command_implemented">command not implemented</string>
     <string name="proto_error_command_none">No command given</string>
     <string name="proto_error_command_unknown" formatted="false">unknown command "%1$s"</string>

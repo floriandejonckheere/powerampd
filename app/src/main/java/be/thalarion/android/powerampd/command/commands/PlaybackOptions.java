@@ -101,18 +101,6 @@ public class PlaybackOptions {
         }
     }
 
-    public static class Consume extends Command {
-
-        public Consume() { super(null, Permission.PERMISSION_CONTROL); }
-        @Override
-        public void executeCommand(Connection conn) throws ProtocolException {
-            throw new ProtocolException(
-                    ProtocolException.ACK_ERROR_SYSTEM,
-                    cmdline.get(0),
-                    conn.getContext().getString(R.string.proto_error_consume));
-        }
-    }
-
     public static class Volume extends Command {
         public Volume(List<String> cmdline) { super(cmdline, Permission.PERMISSION_NONE); }
 

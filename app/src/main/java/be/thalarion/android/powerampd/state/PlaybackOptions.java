@@ -78,7 +78,9 @@ public class PlaybackOptions {
                 setRepeat(context, PowerampAPI.RepeatMode.REPEAT_SONG);
             } else {
                 Log.i("powerampd", "Registering stopBroadcastReceiver");
-                context.registerReceiver(System.stopBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED));
+                IntentFilter filter = new IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED);
+                filter.setPriority(Integer.MAX_VALUE);
+                context.registerReceiver(System.stopBroadcastReceiver, filter);
             }
         } else {
             if (getRepeat()) {
