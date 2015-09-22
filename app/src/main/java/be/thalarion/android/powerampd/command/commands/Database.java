@@ -3,11 +3,10 @@ package be.thalarion.android.powerampd.command.commands;
 import java.util.List;
 
 import be.thalarion.android.powerampd.command.Command;
-import be.thalarion.android.powerampd.command.State;
+import be.thalarion.android.powerampd.protocol.Connection;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 import be.thalarion.android.powerampd.protocol.ProtocolMessage;
-import be.thalarion.android.powerampd.state.DatabaseState;
 
 public class Database {
 
@@ -15,12 +14,12 @@ public class Database {
         public Update(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state)
+        public void executeCommand(Connection conn)
                 throws ProtocolException {
             checkArguments(0, 1);
             if (cmdline.size() == 1) {
                 // Update everything
-                state.send(new ProtocolMessage(String.format("updating_db: %d", DatabaseState.update(state.getContext()))));
+                conn.send(new ProtocolMessage(String.format("updating_db: %d", be.thalarion.android.powerampd.state.Database.update(conn.getContext()))));
             } else {
                 // Update URI
                 throw new ProtocolException(ProtocolException.ACK_ERROR_SYSTEM, "not implemented yet");
@@ -32,12 +31,12 @@ public class Database {
         public Rescan(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state)
+        public void executeCommand(Connection conn)
                 throws ProtocolException {
             checkArguments(0, 1);
             if (cmdline.size() == 1) {
                 // Rescan everything
-                state.send(new ProtocolMessage(String.format("updating_db: %d", DatabaseState.rescan(state.getContext()))));
+                conn.send(new ProtocolMessage(String.format("updating_db: %d", be.thalarion.android.powerampd.state.Database.rescan(conn.getContext()))));
             } else {
                 // Rescan URI
                 throw new ProtocolException(ProtocolException.ACK_ERROR_SYSTEM, "not implemented yet");

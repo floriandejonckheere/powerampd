@@ -1,11 +1,10 @@
 package be.thalarion.android.powerampd.command;
 
 
-import android.content.Context;
-
 import java.util.List;
 
 import be.thalarion.android.powerampd.R;
+import be.thalarion.android.powerampd.protocol.Connection;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 
@@ -13,7 +12,7 @@ public abstract class Command implements Executable {
 
     protected final List<String> cmdline;
     private final Permission permission;
-    private State state;
+    private Connection conn;
 
     public Command(List<String> cmdline, Permission permission) {
         this.cmdline = cmdline;
@@ -21,19 +20,19 @@ public abstract class Command implements Executable {
     }
 
     @Override
-    public void execute(State state)
+    public void execute(Connection conn)
             throws ProtocolException {
-        this.state = state;
+        this.conn = conn;
 
         // Authorize command
-        if (!state.authorize(permission))
+        if (!conn.authorize(permission))
             throw new ProtocolException(ProtocolException.ACK_ERROR_PERMISSION, cmdline.get(0),
                     String.format("you don't have permission for \"%s\"", cmdline.get(0)));
 
-        executeCommand(state); // throws ProtocolException
+        executeCommand(conn); // throws ProtocolException
     }
 
-    public abstract void executeCommand(State state)
+    public abstract void executeCommand(Connection conn)
             throws ProtocolException;
 
     /**
@@ -93,7 +92,7 @@ public abstract class Command implements Executable {
             return true;
         } else
             throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                    state.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(index)));
+                    conn.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(index)));
     }
 
 }

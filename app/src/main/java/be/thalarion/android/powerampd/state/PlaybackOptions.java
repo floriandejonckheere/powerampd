@@ -11,13 +11,13 @@ import com.maxmpz.poweramp.player.PowerampAPI;
 
 import be.thalarion.android.powerampd.R;
 
-public class PlaybackOptionsState {
+public class PlaybackOptions {
     /**
      * getRepeat - Playback repeat status
      * @return boolean
      */
     public static boolean getRepeat() {
-        return !(SystemState.playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_NONE);
+        return !(System.playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_NONE);
     }
 
     /**
@@ -37,7 +37,7 @@ public class PlaybackOptionsState {
      * @return
      */
     public static boolean getRandom() {
-        return !(SystemState.playingModeIntent.getIntExtra(PowerampAPI.SHUFFLE, -1) == PowerampAPI.ShuffleMode.SHUFFLE_NONE);
+        return !(System.playingModeIntent.getIntExtra(PowerampAPI.SHUFFLE, -1) == PowerampAPI.ShuffleMode.SHUFFLE_NONE);
     }
 
     /**
@@ -62,7 +62,7 @@ public class PlaybackOptionsState {
          * 1. if repeat mode is REPEAT_SONG
          * 2. if the single boolean is true
          */
-        return (SystemState.single || SystemState.playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_SONG);
+        return (System.single || System.playingModeIntent.getIntExtra(PowerampAPI.REPEAT, -1) == PowerampAPI.RepeatMode.REPEAT_SONG);
     }
 
     /**
@@ -78,17 +78,17 @@ public class PlaybackOptionsState {
                 setRepeat(context, PowerampAPI.RepeatMode.REPEAT_SONG);
             } else {
                 Log.i("powerampd", "Registering stopBroadcastReceiver");
-                context.registerReceiver(SystemState.stopBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED));
+                context.registerReceiver(System.stopBroadcastReceiver, new IntentFilter(PowerampAPI.ACTION_TRACK_CHANGED));
             }
         } else {
             if (getRepeat()) {
                 setRepeat(context, PreferenceManager.getDefaultSharedPreferences(context).getInt("pref_repeat", Integer.valueOf(context.getString(R.string.pref_repeat))));
             } else {
                 Log.i("powerampd", "Unregistering stopBroadcastReceiver");
-                context.unregisterReceiver(SystemState.stopBroadcastReceiver);
+                context.unregisterReceiver(System.stopBroadcastReceiver);
             }
         }
-        SystemState.single = single;
+        System.single = single;
     }
 
     /**

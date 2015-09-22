@@ -4,12 +4,8 @@ import java.util.List;
 
 import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.command.Command;
-import be.thalarion.android.powerampd.command.State;
-import be.thalarion.android.powerampd.protocol.Permission;
-import be.thalarion.android.powerampd.protocol.ProtocolException;
-import be.thalarion.android.powerampd.state.PlaybackControlState;
-import be.thalarion.android.powerampd.state.PlaybackOptionsState;
-import be.thalarion.android.powerampd.state.SystemState;
+import be.thalarion.android.powerampd.protocol.*;
+import be.thalarion.android.powerampd.protocol.Connection;
 
 public class PlaybackControl {
 
@@ -17,10 +13,10 @@ public class PlaybackControl {
         public Next(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state)
+        public void executeCommand(Connection conn)
                 throws ProtocolException {
             checkArguments(0, 0);
-            PlaybackControlState.next(state.getContext());
+            be.thalarion.android.powerampd.state.PlaybackControl.next(conn.getContext());
         }
     }
 
@@ -28,18 +24,18 @@ public class PlaybackControl {
         public Pause(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state)
+        public void executeCommand(be.thalarion.android.powerampd.protocol.Connection conn)
                 throws ProtocolException {
             checkArguments(0, 1);
             if (cmdline.size() > 1) {
                 if (cmdline.get(1).equals("0")) {
-                    PlaybackControlState.resume(state.getContext());
+                    be.thalarion.android.powerampd.state.PlaybackControl.resume(conn.getContext());
                 } else if (cmdline.get(1).equals("1")) {
-                    PlaybackControlState.pause(state.getContext());
+                    be.thalarion.android.powerampd.state.PlaybackControl.pause(conn.getContext());
                 } else
                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                            state.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(1)));
-            } else PlaybackControlState.toggle(state.getContext());
+                            conn.getContext().getString(R.string.proto_error_arg_boolean, cmdline.get(1)));
+            } else be.thalarion.android.powerampd.state.PlaybackControl.toggle(conn.getContext());
         }
     }
 
@@ -47,10 +43,10 @@ public class PlaybackControl {
         public Previous(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state)
+        public void executeCommand(Connection conn)
                 throws ProtocolException {
             checkArguments(0, 0);
-            PlaybackControlState.previous(state.getContext());
+            be.thalarion.android.powerampd.state.PlaybackControl.previous(conn.getContext());
         }
     }
 
@@ -58,10 +54,10 @@ public class PlaybackControl {
         public Stop(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state)
+        public void executeCommand(Connection conn)
                 throws ProtocolException {
             checkArguments(0, 0);
-            PlaybackControlState.stop(state.getContext());
+            be.thalarion.android.powerampd.state.PlaybackControl.stop(conn.getContext());
         }
     }
 

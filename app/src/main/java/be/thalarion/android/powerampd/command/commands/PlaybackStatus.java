@@ -4,14 +4,11 @@ import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.util.List;
 
-import be.thalarion.android.powerampd.state.PlaybackOptionsState;
-import be.thalarion.android.powerampd.state.PlaybackStatusState;
-import be.thalarion.android.powerampd.state.SystemState;
+import be.thalarion.android.powerampd.protocol.*;
+import be.thalarion.android.powerampd.state.PlaybackOptions;
+import be.thalarion.android.powerampd.state.System;
 import be.thalarion.android.powerampd.command.Command;
-import be.thalarion.android.powerampd.command.State;
-import be.thalarion.android.powerampd.protocol.Permission;
-import be.thalarion.android.powerampd.protocol.ProtocolException;
-import be.thalarion.android.powerampd.protocol.ProtocolMessage;
+import be.thalarion.android.powerampd.protocol.Connection;
 
 public class PlaybackStatus {
 
@@ -19,11 +16,11 @@ public class PlaybackStatus {
         public CurrentSong(List<String> cmdline) { super(cmdline, Permission.PERMISSION_READ); }
 
         @Override
-        public void executeCommand(State state)
+        public void executeCommand(Connection conn)
                 throws ProtocolException {
             checkArguments(0, 0);
-            state.send(new ProtocolMessage(String.format("Title: %s",
-                    SystemState.getTrack().getString(PowerampAPI.Track.TITLE))));
+            conn.send(new ProtocolMessage(String.format("Title: %s",
+                    System.getTrack().getString(PowerampAPI.Track.TITLE))));
         }
     }
 
@@ -31,23 +28,23 @@ public class PlaybackStatus {
         public Status(List<String> cmdline) { super(cmdline, Permission.PERMISSION_READ); }
 
         @Override
-        public void executeCommand(State state)
+        public void executeCommand(be.thalarion.android.powerampd.protocol.Connection conn)
                 throws ProtocolException {
             checkArguments(0, 0);
-            state.send(new ProtocolMessage(String.format("volume: %d", Math.round(PlaybackOptionsState.getVolume(state.getContext())))));
-            state.send(new ProtocolMessage(String.format("repeat: %d", (PlaybackOptionsState.getRepeat() ? 1 : 0))));
-            state.send(new ProtocolMessage(String.format("random: %d", (PlaybackOptionsState.getRandom() ? 1 : 0))));
-            state.send(new ProtocolMessage(String.format("single: %d", (PlaybackOptionsState.getSingle() ? 1 : 0))));
+            conn.send(new ProtocolMessage(String.format("volume: %d", Math.round(PlaybackOptions.getVolume(conn.getContext())))));
+            conn.send(new ProtocolMessage(String.format("repeat: %d", (PlaybackOptions.getRepeat() ? 1 : 0))));
+            conn.send(new ProtocolMessage(String.format("random: %d", (PlaybackOptions.getRandom() ? 1 : 0))));
+            conn.send(new ProtocolMessage(String.format("single: %d", (PlaybackOptions.getSingle() ? 1 : 0))));
             // Consume mode is not supported in Poweramp
-            state.send(new ProtocolMessage(String.format("consume: %d", 0)));
-            state.send(new ProtocolMessage(String.format("playlist: %d", 0)));
-            state.send(new ProtocolMessage(String.format("playlistlength: %d", 0)));
-            state.send(new ProtocolMessage(String.format("mixrampdb: %d", 0)));
-            state.send(new ProtocolMessage(String.format("state: %s", PlaybackStatusState.getState(state.getContext()))));
-            state.send(new ProtocolMessage(String.format("song: %s", 0)));
-            state.send(new ProtocolMessage(String.format("songid: %s", 0)));
-            state.send(new ProtocolMessage(String.format("nextsong: %s", 0)));
-            state.send(new ProtocolMessage(String.format("nextsongid: %s", 0)));
+            conn.send(new ProtocolMessage(String.format("consume: %d", 0)));
+            conn.send(new ProtocolMessage(String.format("playlist: %d", 0)));
+            conn.send(new ProtocolMessage(String.format("playlistlength: %d", 0)));
+            conn.send(new ProtocolMessage(String.format("mixrampdb: %d", 0)));
+            conn.send(new ProtocolMessage(String.format("state: %s", be.thalarion.android.powerampd.state.PlaybackStatus.getState(conn.getContext()))));
+            conn.send(new ProtocolMessage(String.format("song: %s", 0)));
+            conn.send(new ProtocolMessage(String.format("songid: %s", 0)));
+            conn.send(new ProtocolMessage(String.format("nextsong: %s", 0)));
+            conn.send(new ProtocolMessage(String.format("nextsongid: %s", 0)));
         }
     }
 }

@@ -25,8 +25,8 @@ import java.util.List;
 
 import be.thalarion.android.powerampd.MainActivity;
 import be.thalarion.android.powerampd.R;
-import be.thalarion.android.powerampd.state.DatabaseState;
-import be.thalarion.android.powerampd.state.SystemState;
+import be.thalarion.android.powerampd.state.Database;
+import be.thalarion.android.powerampd.state.System;
 
 public class DaemonService extends Service {
 
@@ -64,19 +64,19 @@ public class DaemonService extends Service {
         this.trackBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                SystemState.trackIntent = intent;
+                System.trackIntent = intent;
             }
         };
         this.statusBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                SystemState.statusIntent = intent;
+                System.statusIntent = intent;
             }
         };
         this.playingModeBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                SystemState.playingModeIntent = intent;
+                System.playingModeIntent = intent;
             }
         };
         this.scanBroadcastReceiver = new BroadcastReceiver() {
@@ -84,9 +84,9 @@ public class DaemonService extends Service {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (action.equals(PowerampAPI.Scanner.ACTION_DIRS_SCAN_STARTED) || action.equals(PowerampAPI.Scanner.ACTION_TAGS_SCAN_STARTED)) {
-                    DatabaseState.scanning = true;
+                    Database.scanning = true;
                 } else if (action.equals(PowerampAPI.Scanner.ACTION_DIRS_SCAN_FINISHED) || action.equals(PowerampAPI.Scanner.ACTION_TAGS_SCAN_FINISHED)) {
-                    DatabaseState.scanning = false;
+                    Database.scanning = false;
                 }
             }
         };

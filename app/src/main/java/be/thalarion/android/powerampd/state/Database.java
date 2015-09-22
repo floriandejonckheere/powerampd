@@ -5,9 +5,17 @@ import android.content.Intent;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
-public class DatabaseState {
+public class Database {
 
+    /**
+     * Poweramp is scanning files and tags
+     * Set in DaemonService.scanningBroadcastReceiver
+     */
     public static boolean scanning = false;
+
+    /**
+     * MPD scan job ID
+     */
     private static int scanQueue = 0;
 
     /**

@@ -1,4 +1,4 @@
-package be.thalarion.android.powerampd.command;
+package be.thalarion.android.powerampd.protocol;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,9 +23,9 @@ import be.thalarion.android.powerampd.protocol.Protocol;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
 
 /**
- * Application state of client-server communication
+ * Client-server connection
  */
-public class State {
+public class Connection {
 
     private Context context;
     private Socket socket;
@@ -35,7 +35,7 @@ public class State {
 
     private long passwordEntryId;
 
-    public State(Context context, Socket socket) {
+    public Connection(Context context, Socket socket) {
         this.context = context;
         this.socket = socket;
         this.passwordEntryId = -1;
@@ -92,8 +92,9 @@ public class State {
     }
 
     public boolean authorize(Permission permission) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         // Check permissions only if it is enabled
-        if (getPreferences().getBoolean("pref_auth_enabled", context.getString(R.string.pref_auth_enabled_default).equals("true"))) {
+        if (prefs.getBoolean("pref_auth_enabled", context.getString(R.string.pref_auth_enabled_default).equals("true"))) {
             if (permission == Permission.PERMISSION_NONE)
                 return true;
 
@@ -101,13 +102,13 @@ public class State {
             if (!isAuthenticated()) {
                 switch (permission) {
                     case PERMISSION_READ:
-                        return getPreferences().getBoolean("pref_permission_read_default", context.getString(R.string.pref_permission_read_default).equals("true"));
+                        return prefs.getBoolean("pref_permission_read_default", context.getString(R.string.pref_permission_read_default).equals("true"));
                     case PERMISSION_ADD:
-                        return getPreferences().getBoolean("pref_permission_add_default", context.getString(R.string.pref_permission_add_default).equals("true"));
+                        return prefs.getBoolean("pref_permission_add_default", context.getString(R.string.pref_permission_add_default).equals("true"));
                     case PERMISSION_CONTROL:
-                        return getPreferences().getBoolean("pref_permission_control_default", context.getString(R.string.pref_permission_control_default).equals("true"));
+                        return prefs.getBoolean("pref_permission_control_default", context.getString(R.string.pref_permission_control_default).equals("true"));
                     case PERMISSION_ADMIN:
-                        return getPreferences().getBoolean("pref_permission_admin_default", context.getString(R.string.pref_permission_admin_default).equals("true"));
+                        return prefs.getBoolean("pref_permission_admin_default", context.getString(R.string.pref_permission_admin_default).equals("true"));
                 }
             } else {
                 PasswordEntry entry = PasswordEntry.findById(PasswordEntry.class, passwordEntryId);
@@ -118,10 +119,6 @@ public class State {
             }
         }
         return true;
-    }
-
-    public SharedPreferences getPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public Context getContext() {

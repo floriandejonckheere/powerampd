@@ -3,21 +3,15 @@ package be.thalarion.android.powerampd.state;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
-import be.thalarion.android.powerampd.R;
-import be.thalarion.android.powerampd.command.commands.PlaybackControl;
-
 /**
  * Resource state of system
  */
-public class SystemState {
+public class System {
 
     /**
      * Poweramp state
@@ -41,7 +35,7 @@ public class SystemState {
             } else if (!this.trackID.equals(newTrackID)) {
                 // Track ID changed, so we must stop now.
                 this.trackID = newTrackID;
-                PlaybackControlState.stop(context);
+                PlaybackControl.stop(context);
             }
         }
     };

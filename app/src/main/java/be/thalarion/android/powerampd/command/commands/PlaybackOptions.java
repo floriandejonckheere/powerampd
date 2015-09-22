@@ -8,11 +8,8 @@ import java.util.List;
 
 import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.command.Command;
-import be.thalarion.android.powerampd.command.State;
-import be.thalarion.android.powerampd.protocol.Permission;
-import be.thalarion.android.powerampd.protocol.ProtocolException;
-import be.thalarion.android.powerampd.state.PlaybackOptionsState;
-import be.thalarion.android.powerampd.state.SystemState;
+import be.thalarion.android.powerampd.protocol.*;
+import be.thalarion.android.powerampd.protocol.Connection;
 
 public class PlaybackOptions {
 
@@ -20,25 +17,25 @@ public class PlaybackOptions {
         public Random(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state) throws ProtocolException {
+        public void executeCommand(Connection conn) throws ProtocolException {
             checkArguments(1, 1);
             boolean random = getBoolean(1);
 
             if (random) {
-                String mode = PreferenceManager.getDefaultSharedPreferences(state.getContext())
-                        .getString("pref_shuffle", state.getContext().getString(R.string.pref_shuffle_default));
+                String mode = PreferenceManager.getDefaultSharedPreferences(conn.getContext())
+                        .getString("pref_shuffle", conn.getContext().getString(R.string.pref_shuffle_default));
 
                 if (mode.equals("SHUFFLE_ALL")) {
-                    PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_ALL);
+                    be.thalarion.android.powerampd.state.PlaybackOptions.setRandom(conn.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_ALL);
                 } else if (mode.equals("SHUFFLE_SONGS")) {
-                    PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS);
+                    be.thalarion.android.powerampd.state.PlaybackOptions.setRandom(conn.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS);
                 } else if (mode.equals("SHUFFLE_CATS")) {
-                    PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_CATS);
+                    be.thalarion.android.powerampd.state.PlaybackOptions.setRandom(conn.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_CATS);
                 } else {
-                    PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS_AND_CATS);
+                    be.thalarion.android.powerampd.state.PlaybackOptions.setRandom(conn.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_SONGS_AND_CATS);
                 }
             } else {
-                PlaybackOptionsState.setRandom(state.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_NONE);
+                be.thalarion.android.powerampd.state.PlaybackOptions.setRandom(conn.getContext(), PowerampAPI.ShuffleMode.SHUFFLE_NONE);
             }
         }
     }
@@ -47,28 +44,28 @@ public class PlaybackOptions {
         public Repeat(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state) throws ProtocolException {
+        public void executeCommand(Connection conn) throws ProtocolException {
             checkArguments(1, 1);
             boolean repeat = getBoolean(1);
-            boolean single = PlaybackOptionsState.getSingle();
+            boolean single = be.thalarion.android.powerampd.state.PlaybackOptions.getSingle();
 
             if (repeat) {
                 if (single) {
                     // Repeat, single -> repeat single song
-                    PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
+                    be.thalarion.android.powerampd.state.PlaybackOptions.setRepeat(conn.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
                 } else {
                     // Repeat, no single -> user defined repeat mode
-                    String repeatPreference = PreferenceManager.getDefaultSharedPreferences(state.getContext())
-                            .getString("pref_repeat", state.getContext().getString(R.string.pref_repeat_default));
+                    String repeatPreference = PreferenceManager.getDefaultSharedPreferences(conn.getContext())
+                            .getString("pref_repeat", conn.getContext().getString(R.string.pref_repeat_default));
                     if (repeatPreference.equals("REPEAT_ON")) {
-                        PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
-                    } else PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
+                        be.thalarion.android.powerampd.state.PlaybackOptions.setRepeat(conn.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
+                    } else be.thalarion.android.powerampd.state.PlaybackOptions.setRepeat(conn.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
                 }
             } else {
                 // No repeat, no single -> no repeat
-                PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
+                be.thalarion.android.powerampd.state.PlaybackOptions.setRepeat(conn.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
                 // No repeat, single -> play single song and stop
-                PlaybackOptionsState.setSingle(state.getContext(), single);
+                be.thalarion.android.powerampd.state.PlaybackOptions.setSingle(conn.getContext(), single);
             }
         }
     }
@@ -77,29 +74,29 @@ public class PlaybackOptions {
         public Single(List<String> cmdline) { super(cmdline, Permission.PERMISSION_CONTROL); }
 
         @Override
-        public void executeCommand(State state) throws ProtocolException {
+        public void executeCommand(be.thalarion.android.powerampd.protocol.Connection conn) throws ProtocolException {
             checkArguments(1, 1);
-            boolean repeat = PlaybackOptionsState.getRepeat();
+            boolean repeat = be.thalarion.android.powerampd.state.PlaybackOptions.getRepeat();
             boolean single = getBoolean(1);
 
             if (repeat) {
-                PlaybackOptionsState.setSingle(state.getContext(), false);
+                be.thalarion.android.powerampd.state.PlaybackOptions.setSingle(conn.getContext(), false);
                 if (single) {
                     // Repeat, single -> repeat single song
-                    PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
+                    be.thalarion.android.powerampd.state.PlaybackOptions.setRepeat(conn.getContext(), PowerampAPI.RepeatMode.REPEAT_SONG);
                 } else {
                     // Repeat, no single -> user defined repeat mode
-                    String repeatPreference = PreferenceManager.getDefaultSharedPreferences(state.getContext())
-                            .getString("pref_repeat", state.getContext().getString(R.string.pref_repeat_default));
+                    String repeatPreference = PreferenceManager.getDefaultSharedPreferences(conn.getContext())
+                            .getString("pref_repeat", conn.getContext().getString(R.string.pref_repeat_default));
                     if (repeatPreference.equals("REPEAT_ON")) {
-                        PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
-                    } else PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
+                        be.thalarion.android.powerampd.state.PlaybackOptions.setRepeat(conn.getContext(), PowerampAPI.RepeatMode.REPEAT_ON);
+                    } else be.thalarion.android.powerampd.state.PlaybackOptions.setRepeat(conn.getContext(), PowerampAPI.RepeatMode.REPEAT_ADVANCE);
                 }
             } else {
                 // No repeat, no single -> no repeat
-                PlaybackOptionsState.setRepeat(state.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
+                be.thalarion.android.powerampd.state.PlaybackOptions.setRepeat(conn.getContext(), PowerampAPI.RepeatMode.REPEAT_NONE);
                 // No repeat, single -> play single song and stop
-                PlaybackOptionsState.setSingle(state.getContext(), single);
+                be.thalarion.android.powerampd.state.PlaybackOptions.setSingle(conn.getContext(), single);
             }
         }
     }
@@ -108,11 +105,11 @@ public class PlaybackOptions {
 
         public Consume() { super(null, Permission.PERMISSION_CONTROL); }
         @Override
-        public void executeCommand(State state) throws ProtocolException {
+        public void executeCommand(Connection conn) throws ProtocolException {
             throw new ProtocolException(
                     ProtocolException.ACK_ERROR_SYSTEM,
                     cmdline.get(0),
-                    state.getContext().getString(R.string.proto_error_consume));
+                    conn.getContext().getString(R.string.proto_error_consume));
         }
     }
 
@@ -120,21 +117,21 @@ public class PlaybackOptions {
         public Volume(List<String> cmdline) { super(cmdline, Permission.PERMISSION_NONE); }
 
         @Override
-        public void executeCommand(State state) throws ProtocolException {
+        public void executeCommand(Connection conn) throws ProtocolException {
             checkArguments(1, 1);
             try {
                 int volume = Integer.parseInt(cmdline.get(1));
                 if (volume > 100)
                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                            state.getContext().getString(R.string.proto_error_volume_invalid));
+                            conn.getContext().getString(R.string.proto_error_volume_invalid));
 
                 if (volume < 0)
                     throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                            state.getContext().getString(R.string.proto_error_volume_integer, cmdline.get(1)));
-                PlaybackOptionsState.setVolume(state.getContext(), volume);
+                            conn.getContext().getString(R.string.proto_error_volume_integer, cmdline.get(1)));
+                be.thalarion.android.powerampd.state.PlaybackOptions.setVolume(conn.getContext(), volume);
             } catch (NumberFormatException e) {
                 throw new ProtocolException(ProtocolException.ACK_ERROR_ARG, cmdline.get(0),
-                        state.getContext().getString(R.string.proto_error_volume_integer, cmdline.get(1)));
+                        conn.getContext().getString(R.string.proto_error_volume_integer, cmdline.get(1)));
             }
         }
     }

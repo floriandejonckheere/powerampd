@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
-public class PlaybackControlState {
+public class PlaybackControl {
 
     /**
      * stop - Stop playback
