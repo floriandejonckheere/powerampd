@@ -38,6 +38,8 @@ public class Parser {
         PREVIOUS,
         RANDOM,
         REPEAT,
+        REPLAY_GAIN_MODE,
+        REPLAY_GAIN_STATUS,
         RESCAN,
         SETVOL,
         SINGLE,
@@ -136,6 +138,12 @@ public class Parser {
                 return new PlaybackOptions.Random(cmdline);
             case REPEAT:
                 return new PlaybackOptions.Repeat(cmdline);
+            case REPLAY_GAIN_MODE:
+            case REPLAY_GAIN_STATUS:
+                return new Meta.DelayedException(new ProtocolException(
+                        ProtocolException.ACK_ERROR_SYSTEM,
+                        cmdline.get(0),
+                        context.getString(R.string.proto_error_replay_gain)));
             case RESCAN:
                 return new Database.Rescan(cmdline);
             case SINGLE:

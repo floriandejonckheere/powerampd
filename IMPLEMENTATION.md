@@ -33,8 +33,8 @@ Deprecated commands are implemented to maintain compatibility.
 | `repeat`                  | Partially implemented |
 | `setvol`                  | Implemented |
 | `single`                  | **Currently not supported** |
-| `replay_gain_mode`        |  |
-| `replay_gain_status`      |  |
+| `replay_gain_mode`        | **No API support yet** |
+| `replay_gain_status`      | **No API support yet** |
 | `volume`                  | Deprecated (see `setvol`) |
 
 ## Playback control

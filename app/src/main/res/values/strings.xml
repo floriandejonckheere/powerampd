@@ -84,6 +84,7 @@
 
     <string name="proto_error_crossfade">Cross-fade is  currently not supported</string>
     <string name="proto_error_consume">Consume mode is not supported</string>
+    <string name="proto_error_replay_gain">Replay Gain is currently not supported</string>
     <string name="proto_error_single">Single mode is currently not supported</string>
     <string name="proto_error_command_implemented">command not implemented</string>
     <string name="proto_error_command_none">No command given</string>
