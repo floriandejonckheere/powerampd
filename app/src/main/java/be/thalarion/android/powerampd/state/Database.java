@@ -16,7 +16,7 @@ public class Database {
     /**
      * MPD scan job ID
      */
-    private static int scanQueue = 0;
+    public static int scanQueue = 0;
 
     /**
      * update - Updates the music database: find new files, remove deleted files, update modified files

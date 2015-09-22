@@ -47,4 +47,6 @@ public class ProtocolException extends Exception implements Protocol {
     }
 
     public void setLine(int line) { this.line = line; }
+
+    public String getMessage() { return this.message; }
 }

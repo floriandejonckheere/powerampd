@@ -13,6 +13,7 @@ There are a few differences in protocol response with the official MPD server. T
 - MPD's repeat and single modes map onto Poweramp's repeat mode
 - Single mode is currently not supported
 - Poweramp default shuffle/repeat mode can be set in preferences
+- Poweramp provides no API for crossfade options
 
 Poweramp repeat and single mode mapping is as follows:
 

@@ -26,7 +26,7 @@ Deprecated commands are implemented to maintain compatibility.
 | Command                   | Status |
 |---------------------------|--------|
 | `consume`                 | **Not supported in Poweramp** |
-| `crossfade`               |  |
+| `crossfade`               | **No API support yet** |
 | `mixrampdb`               |  |
 | `mixrampdelay`            |  |
 | `random`                  | Implemented |

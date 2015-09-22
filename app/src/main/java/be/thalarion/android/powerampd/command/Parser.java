@@ -29,6 +29,7 @@ public class Parser {
         COMMAND_LIST_END,
         COMMAND_LIST_OK_BEGIN,
         CONSUME,
+        CROSSFADE,
         CURRENTSONG,
         NEXT,
         PASSWORD,
@@ -112,6 +113,11 @@ public class Parser {
                         ProtocolException.ACK_ERROR_SYSTEM,
                         cmdline.get(0),
                         context.getString(R.string.proto_error_consume)));
+            case CROSSFADE:
+                return new Meta.DelayedException(new ProtocolException(
+                        ProtocolException.ACK_ERROR_SYSTEM,
+                        cmdline.get(0),
+                        context.getString(R.string.proto_error_crossfade)));
             case CURRENTSONG:
                 return new PlaybackStatus.CurrentSong(cmdline);
             case DEBUG:

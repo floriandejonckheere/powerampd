@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
+import be.thalarion.android.powerampd.protocol.ProtocolException;
+
 /**
  * Resource state of system
  */
@@ -19,6 +21,8 @@ public class System {
     public static Intent trackIntent;
     public static Intent statusIntent;
     public static Intent playingModeIntent;
+
+    public static ProtocolException error;
 
     // Single mode
     protected static boolean single;
