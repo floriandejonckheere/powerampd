@@ -1,12 +1,9 @@
 package be.thalarion.android.powerampd.command;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-import com.maxmpz.poweramp.player.PowerampAPI;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,7 +13,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.List;
 
-import be.thalarion.android.powerampd.PasswordEntry;
+import be.thalarion.android.powerampd.password.Entry;
 import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.Protocol;
@@ -81,7 +78,7 @@ public class State {
 
     public boolean authenticate(String password)
             throws ProtocolException {
-        List<PasswordEntry> entries = PasswordEntry.find(PasswordEntry.class, "password = ?", password);
+        List<Entry> entries = Entry.find(Entry.class, "password = ?", password);
         if (entries == null || entries.size() == 0)
             return false;
 
@@ -110,7 +107,7 @@ public class State {
                         return getPreferences().getBoolean("pref_permission_admin_default", context.getString(R.string.pref_permission_admin_default).equals("true"));
                 }
             } else {
-                PasswordEntry entry = PasswordEntry.findById(PasswordEntry.class, passwordEntryId);
+                Entry entry = Entry.findById(Entry.class, passwordEntryId);
                 if (entry == null)
                     return false;
 

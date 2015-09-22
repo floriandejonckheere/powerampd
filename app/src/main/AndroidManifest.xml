@@ -13,7 +13,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         tools:replace="android:icon"
-        android:name="com.orm.SugarApp">
+        android:name=".orm.Application">
         <service
             android:name=".service.DaemonService"
             android:enabled="true"
@@ -49,10 +49,8 @@
                 android:value=".AuthActivity" />
         </activity>
 
-        <meta-data android:name="DATABASE" android:value="powerampd.db" />
-        <meta-data android:name="VERSION" android:value="1" />
-        <meta-data android:name="QUERY_LOG" android:value="false" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="be.thalarion.android" />
+        <meta-data android:name="database" android:value="powerampd" />
+
     </application>
 
 </manifest>

@@ -11,11 +11,13 @@ import android.widget.Button;
 
 import java.util.List;
 
+import be.thalarion.android.powerampd.password.Entry;
+
 public class AuthActivity extends PreferenceActivity
         implements View.OnClickListener,
                     Preference.OnPreferenceClickListener {
 
-    private List<PasswordEntry> passwordEntries;
+    private List<Entry> passwordEntries;
 
     private PreferenceCategory entryListView;
     private Button addPasswordButton;
@@ -42,9 +44,9 @@ public class AuthActivity extends PreferenceActivity
 
         entryListView.removeAll();
 
-        passwordEntries = PasswordEntry.listAll(PasswordEntry.class);
+        passwordEntries = Entry.listAll(Entry.class);
 
-        for (PasswordEntry p: passwordEntries) {
+        for (Entry p: passwordEntries) {
             Preference pref = new IdentifierPreference(this, p.getId());
             pref.setTitle(p.password);
             pref.setSummary(p.getPermissionSummary());

@@ -9,11 +9,13 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Toast;
 
+import be.thalarion.android.powerampd.password.Entry;
+
 public class EditAuthActivity extends PreferenceActivity {
 
     private EditTextPreference password;
     private CheckBoxPreference permRead, permAdd, permControl, permAdmin;
-    private PasswordEntry entry;
+    private Entry entry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +29,10 @@ public class EditAuthActivity extends PreferenceActivity {
         permControl = (CheckBoxPreference) findPreference("pref_permission_control");
         permAdmin   = (CheckBoxPreference) findPreference("pref_permission_admin");
 
-        entry = PasswordEntry.findById(PasswordEntry.class, getIntent().getLongExtra("id", 0));
+        entry = Entry.findById(Entry.class, getIntent().getLongExtra("id", 0));
         if (entry == null) {
             // New entry
-            entry = new PasswordEntry(getApplicationContext().getString(R.string.pref_password_default), false, false, false, false);
+            entry = new Entry(getApplicationContext().getString(R.string.pref_password_default), false, false, false, false);
             findViewById(R.id.button_delete).setEnabled(false);
         }
 
