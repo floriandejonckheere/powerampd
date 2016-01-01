@@ -31,8 +31,14 @@ public class Parser {
         CONSUME,
         CROSSFADE,
         CURRENTSONG,
+        DISABLEOUTPUT,
+        ENABLEOUTPUT,
         KILL,
+        LISTMOUNTS,
+        LISTNEIGHBOURS,
+        MOUNT,
         NEXT,
+        OUTPUTS,
         PASSWORD,
         PAUSE,
         PING,
@@ -46,6 +52,8 @@ public class Parser {
         SINGLE,
         STATUS,
         STOP,
+        TOGGLEOUTPUT,
+        UNMOUNT,
         UPDATE,
         VOLUME,
 
@@ -115,12 +123,14 @@ public class Parser {
                 return new Meta.DelayedException(new ProtocolException(
                         ProtocolException.ACK_ERROR_SYSTEM,
                         cmdline.get(0),
-                        context.getString(R.string.proto_error_consume)));
+                        String.format(context.getString(R.string.proto_error_unsupported),
+                                context.getString(R.string.proto_consume))));
             case CROSSFADE:
                 return new Meta.DelayedException(new ProtocolException(
                         ProtocolException.ACK_ERROR_SYSTEM,
                         cmdline.get(0),
-                        context.getString(R.string.proto_error_crossfade)));
+                        String.format(context.getString(R.string.proto_error_currently_unsupported),
+                                context.getString(R.string.proto_crossfade))));
             case CURRENTSONG:
                 return new PlaybackStatus.CurrentSong(cmdline);
             case KILL:
@@ -146,14 +156,16 @@ public class Parser {
                 return new Meta.DelayedException(new ProtocolException(
                         ProtocolException.ACK_ERROR_SYSTEM,
                         cmdline.get(0),
-                        context.getString(R.string.proto_error_replay_gain)));
+                        String.format(context.getString(R.string.proto_error_currently_unsupported),
+                                context.getString(R.string.proto_replay_gain))));
             case RESCAN:
                 return new Database.Rescan(cmdline);
             case SINGLE:
                 return new Meta.DelayedException(new ProtocolException(
                         ProtocolException.ACK_ERROR_SYSTEM,
                         cmdline.get(0),
-                        context.getString(R.string.proto_error_single)));
+                        String.format(context.getString(R.string.proto_error_currently_unsupported),
+                                context.getString(R.string.proto_single))));
             case STATUS:
                 return new PlaybackStatus.Status(cmdline);
             case STOP:
@@ -163,6 +175,24 @@ public class Parser {
             case SETVOL:
             case VOLUME:
                 return new PlaybackOptions.Volume(cmdline);
+            case LISTMOUNTS:
+            case LISTNEIGHBOURS:
+            case MOUNT:
+            case UNMOUNT:
+                return new Meta.DelayedException(new ProtocolException(
+                        ProtocolException.ACK_ERROR_SYSTEM,
+                        cmdline.get(0),
+                        String.format(context.getString(R.string.proto_error_unsupported),
+                                context.getString(R.string.proto_mount))));
+            case DISABLEOUTPUT:
+            case ENABLEOUTPUT:
+            case OUTPUTS:
+            case TOGGLEOUTPUT:
+                return new Meta.DelayedException(new ProtocolException(
+                        ProtocolException.ACK_ERROR_SYSTEM,
+                        cmdline.get(0),
+                        String.format(context.getString(R.string.proto_error_unsupported),
+                                context.getString(R.string.proto_output))));
             default:
                 throw new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, cmdline.get(0),
                         context.getString(R.string.proto_error_command_implemented));

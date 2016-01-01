@@ -117,10 +117,10 @@ Deprecated commands are implemented to maintain compatibility.
 
 | Command                   | Status |
 |---------------------------|--------|
-| `mount`                   |  |
-| `unmount`                 |  |
-| `listmounts`              |  |
-| `listneighbors`           |  |
+| `mount`                   | **Not supported in Poweramp** |
+| `unmount`                 | **Not supported in Poweramp** |
+| `listmounts`              | **Not supported in Poweramp** |
+| `listneighbors`           | **Not supported in Poweramp** |
 
 ## Stickers
 
@@ -141,10 +141,10 @@ Deprecated commands are implemented to maintain compatibility.
 
 | Command                   | Status |
 |---------------------------|--------|
-| `disableoutput`           |  |
-| `enableoutput`            |  |
-| `toggleoutput`            |  |
-| `outputs`                 |  |
+| `disableoutput`           | **Unsupported** |
+| `enableoutput`            | **Unsupported** |
+| `toggleoutput`            | **Unsupported** |
+| `outputs`                 | **Unsupported** |
 
 ## Reflection
 

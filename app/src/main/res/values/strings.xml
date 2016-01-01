@@ -82,10 +82,16 @@
 
     <string name="proto_handshake">MPD 0.19.0</string>
 
-    <string name="proto_error_crossfade">Cross-fade is  currently not supported</string>
-    <string name="proto_error_consume">Consume mode is not supported</string>
-    <string name="proto_error_replay_gain">Replay Gain is currently not supported</string>
-    <string name="proto_error_single">Single mode is currently not supported</string>
+    <string name="proto_crossfade">Cross-fade</string>
+    <string name="proto_consume">Consume mode</string>
+    <string name="proto_replay_gain">Replay Gain</string>
+    <string name="proto_single">Single mode</string>
+    <string name="proto_mount">Mount management</string>
+    <string name="proto_output">Output management</string>
+
+    <string name="proto_error_unsupported">%s is not supported</string>
+    <string name="proto_error_currently_unsupported">%s is currently not supported</string>
+
     <string name="proto_error_command_implemented">command not implemented</string>
     <string name="proto_error_command_none">No command given</string>
     <string name="proto_error_command_unknown" formatted="false">unknown command "%1$s"</string>
