@@ -4,10 +4,8 @@ PoweraMPD is an Android application that acts as a virtual MPD server interface 
 
 ## MPD Protocol differences
 
-There are a few differences in protocol response with the official MPD server. These differences are mere compliance to the specification rather than the code, and should introduce no incompatabilities.
+There are a few differences in how the application handles certain situations. This is usually due to Poweramp not supporting an MPD feature or vice-versa.
 
-- Error handling: the command resulting error is always printed
-- Encoding: special characters are handled better
 - Consume mode is not supported in Poweramp
 - MPD's random mode maps onto Poweramp's shuffle mode
 - MPD's repeat and single modes map onto Poweramp's repeat mode
@@ -45,6 +43,12 @@ The applications needs the following permissions:
 
 - Download the [Poweramp API library](https://github.com/maxmpz/powerampapi/tree/master/poweramp_api_lib) to the appropriate directory 
 (`app/src/main/java/com/maxmpz/poweramp`)
+
+## Contributing
+
+At the moment only the missing commands need to be written. See `IMPLEMENTATION.md` for a summary of implemented commands. If you want to contribute, here are a few pointers:
+
+- Commands are classes that extend the `command/Command` class. Constructors should pass the unparsed command line (`cmdline`) if needed and the permission level (`Permission.PERMISSION_*`). All command logic should be done in the overriden `executeCommand` method, including checking the number and validity of arguments (see `Command.checkArguments`). A `protocol.Connection` object is available as a handle to the client-server connection, and is to be used for any communication with the client and/or Poweramp system. Commands are grouped in categories according to the MPD protocol specification.
 
 ## Roadmap
 

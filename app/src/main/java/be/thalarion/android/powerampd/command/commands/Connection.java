@@ -18,6 +18,15 @@ public class Connection {
         }
     }
 
+    public static class Kill extends Command {
+        public Kill() { super(null, Permission.PERMISSION_ADMIN); }
+
+        @Override
+        public void executeCommand(be.thalarion.android.powerampd.protocol.Connection conn) throws ProtocolException {
+            
+        }
+    }
+
     /**
      * Null - empty response
      */

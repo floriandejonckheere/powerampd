@@ -15,7 +15,7 @@ Deprecated commands are implemented to maintain compatibility.
 | Command                   | Status |
 |---------------------------|--------|
 | `clearerror`              |  |
-| `currentsong`             | Partially implemented |
+| `currentsong`             | Implemented |
 | `idle`                    |  |
 | `noidle`                  |  |
 | `status`                  | Partially implemented |

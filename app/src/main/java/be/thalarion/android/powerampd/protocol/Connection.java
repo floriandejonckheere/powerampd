@@ -67,6 +67,8 @@ public class Connection {
         }
     }
 
+    public void print(String message) { send(new ProtocolMessage(message)); }
+
     public void close() {
         Log.i("powerampd-client", "Closing client socket");
         try {
