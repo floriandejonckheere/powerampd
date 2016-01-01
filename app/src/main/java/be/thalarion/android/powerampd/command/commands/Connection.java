@@ -1,11 +1,15 @@
 package be.thalarion.android.powerampd.command.commands;
 
+import android.content.Intent;
+
 import java.util.List;
 
 import be.thalarion.android.powerampd.R;
 import be.thalarion.android.powerampd.command.Command;
 import be.thalarion.android.powerampd.protocol.Permission;
 import be.thalarion.android.powerampd.protocol.ProtocolException;
+import be.thalarion.android.powerampd.service.DaemonService;
+import be.thalarion.android.powerampd.state.System;
 
 public class Connection {
 
@@ -23,7 +27,9 @@ public class Connection {
 
         @Override
         public void executeCommand(be.thalarion.android.powerampd.protocol.Connection conn) throws ProtocolException {
-            
+            System.stopService(conn.getContext());
+            conn.getContext().stopService(new Intent(conn.getContext(), DaemonService.class));
+            conn.close();
         }
     }
 

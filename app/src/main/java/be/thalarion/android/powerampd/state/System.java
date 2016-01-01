@@ -48,4 +48,13 @@ public class System {
     public static Bundle getTrack() {
         return trackIntent.getBundleExtra(PowerampAPI.TRACK);
     }
+
+    /**
+     * stopService - stop the Poweramp service
+     * @param context
+     */
+    public static void stopService(Context context) {
+        context.startService(new Intent(PowerampAPI.ACTION_API_COMMAND)
+                .putExtra(PowerampAPI.COMMAND, PowerampAPI.Commands.STOP_SERVICE));
+    }
 }

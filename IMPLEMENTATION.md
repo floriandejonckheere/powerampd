@@ -133,7 +133,7 @@ Deprecated commands are implemented to maintain compatibility.
 | Command                   | Status |
 |---------------------------|--------|
 | `close`                   | Implemented |
-| `kill`                    |  |
+| `kill`                    | Implemented |
 | `password`                | Implemented |
 | `ping`                    | Implemented |
 

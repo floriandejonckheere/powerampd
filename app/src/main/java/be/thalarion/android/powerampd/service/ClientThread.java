@@ -35,7 +35,7 @@ public class ClientThread implements Runnable {
 
             while (!Thread.currentThread().isInterrupted()) {
                 String line = conn.readLine();
-                Executable executable = null;
+                Executable executable;
                 if (line == null || line.length() == 0) {
                     conn.send(new ProtocolException(ProtocolException.ACK_ERROR_UNKNOWN, conn.getContext().getString(R.string.proto_error_command_none)));
                     break;

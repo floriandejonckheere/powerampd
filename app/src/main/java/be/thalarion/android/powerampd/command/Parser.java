@@ -31,6 +31,7 @@ public class Parser {
         CONSUME,
         CROSSFADE,
         CURRENTSONG,
+        KILL,
         NEXT,
         PASSWORD,
         PAUSE,
@@ -122,6 +123,8 @@ public class Parser {
                         context.getString(R.string.proto_error_crossfade)));
             case CURRENTSONG:
                 return new PlaybackStatus.CurrentSong(cmdline);
+            case KILL:
+                return new Connection.Kill();
             case DEBUG:
                 return new Meta.Debug();
             case NEXT:

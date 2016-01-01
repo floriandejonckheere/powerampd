@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.Formatter;
+import android.util.Log;
 
 import com.maxmpz.poweramp.player.PowerampAPI;
 
@@ -32,7 +33,6 @@ public class DaemonService extends Service {
 
     public static DaemonService instance;
 
-    private NotificationManager notificationManager;
     private static final int notificationID = 1;
 
     // Broadcast receivers
@@ -56,7 +56,6 @@ public class DaemonService extends Service {
     public void onCreate() {
         instance = this;
 
-        this.notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         this.handler = new Handler();
         this.port = Integer.valueOf(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("pref_port",
                 getString(R.string.pref_port_default)));
@@ -190,6 +189,7 @@ public class DaemonService extends Service {
                     new Thread(new ClientThread(getApplicationContext(), socket)).start();
                 }
             } catch (SocketException e) {
+                Log.i("powerampd", "socket.close() called");
                 // Socket.close() called in service
             } catch (IOException e) {
                 e.printStackTrace();
