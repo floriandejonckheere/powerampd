@@ -43,7 +43,7 @@ public class ProtocolException extends Exception implements Protocol {
 
     @Override
     public String toString() {
-        return String.format("ACK [%d@%d] {%s} %s\n", this.error, this.line, this.command, this.message);
+        return String.format("%s [%d@%d] {%s} %s\n", getClass().getResource("proto_ack"), this.error, this.line, this.command, this.message);
     }
 
     public void setLine(int line) { this.line = line; }

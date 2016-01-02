@@ -67,20 +67,23 @@
 
     <string name="pref_shuffle">Default shuffle mode</string>
     <string name="pref_shuffle_default">SHUFFLE_SONGS</string>
-    <string name="pref_shuffle_desc">Poweramp shuffle mode to set when enabling shuffle</string>
+    <string name="pref_shuffle_desc">Poweramp shuffle mode to use when enabling shuffle</string>
 
     <string name="pref_repeat">Default repeat mode</string>
     <string name="pref_repeat_default">REPEAT_ON</string>
-    <string name="pref_repeat_desc">Poweramp repeat mode to set when enabling repeat</string>
+    <string name="pref_repeat_desc">Poweramp repeat mode to use when enabling repeat</string>
 
     <string name="action_add">Add</string>
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
     <string name="action_add_password">Add entry</string>
-    <!-- Protocol strings -->
 
+    <!-- Protocol strings -->
     <string name="proto_handshake">MPD 0.19.0</string>
+    <string name="proto_ok">OK</string>
+    <string name="proto_list_ok">list_OK</string>
+    <string name="proto_ack">ACK</string>
 
     <string name="proto_crossfade">Cross-fade</string>
     <string name="proto_consume">Consume mode</string>
